@@ -77,6 +77,42 @@ namespace AspNet.Controllers
             return Ok(productTag);
         }
 
+
+        [HttpPut("{productId}/{tagId}")]
+        public async Task<IActionResult> UpdateProductTags([FromRoute] int productId,[FromRoute] int tagId,[FromBody] ProductTagUpdateModel model,CancellationToken token)
+        {
+            var productTag = await _context.ProductTags.FirstOrDefaultAsync(pt => pt.ProductId == productId && pt.TagId == tagId,token);
+
+            if (productTag == null)
+                return NotFound("ProductTag relationship not found.");
+
+            var productExists = await _context.Products.AnyAsync(p => p.Id == model.ProductId, token);
+
+            if (!productExists)
+                return NotFound("Product not found.");
+
+            var tagExists = await _context.Tags.AnyAsync(t => t.Id == model.TagId, token);
+
+            if (!tagExists)
+                return NotFound("Tag not found.");
+
+            var duplicate = await _context.ProductTags.AnyAsync(pt => pt.ProductId == model.ProductId && pt.TagId == model.TagId &&
+                      !(pt.ProductId == productId && pt.TagId == tagId),token);
+
+            if (duplicate)
+                return Conflict("This relationship already exists.");
+
+            productTag.ProductId = model.ProductId;
+            productTag.TagId = model.TagId;
+
+            await _context.SaveChangesAsync(token);
+
+            return Ok(productTag);
+        }
+
+
+
+
         [HttpDelete("{productId}/{tagId}")]
         public async Task<IActionResult> Delete([FromRoute] int productId,[FromRoute] int tagId,CancellationToken token)
         {
