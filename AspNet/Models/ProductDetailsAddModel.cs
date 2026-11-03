@@ -1,6 +1,6 @@
 ﻿namespace AspNet.Models
 {
-    public class ProductDetailsAddModdel
+    public class ProductDetailsAddModel
     {
         public int ProductId { get; set; }
 

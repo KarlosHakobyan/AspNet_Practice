@@ -1,39 +1,53 @@
-﻿using AspNet.Data;
-using AspNet.Entities;
+﻿using AspNet.Entities;
 using AspNet.Models;
+using AspNet.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace AspNet.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ProductTagsController : ControllerBase
+    public class ProductTagsController(IProductTagRepository repository) : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
+        private readonly IProductTagRepository _repository = repository;
 
-        public ProductTagsController(ApplicationDbContext context)
+        
+        [HttpGet]
+        public async Task<IActionResult> GetAll(CancellationToken token)
         {
-            _context = context;
+            var productTags = await _repository.GetAllAsync(token);
+
+            return Ok(productTags);
         }
 
-        [HttpPost]
-        public async Task<IActionResult> AddProductTag([FromBody] ProductTagsAddModel model,CancellationToken token)
+        [HttpGet("{productId}/{tagId}")]
+        public async Task<IActionResult> GetByIds([FromRoute] int productId,[FromRoute] int tagId,CancellationToken token)
         {
-            var productExists = await _context.Products.AnyAsync(p => p.Id == model.ProductId, token);
+            var productTag = await _repository.GetByIdsAsync(productId, tagId, token);
 
-            if (!productExists)
-                return NotFound("Product does not exist.");
+            if (productTag == null)
+                return NotFound();
 
-            var tagExists = await _context.Tags.AnyAsync(t => t.Id == model.TagId, token);
+            return Ok(productTag);
+        }
 
-            if (!tagExists)
-                return NotFound("Tag does not exist.");
+       
+        [HttpGet("product/{productId}")]
+        public async Task<IActionResult> GetByProductId([FromRoute] int productId,CancellationToken token)
+        {
+            var productTags = await _repository.GetByProductIdAsync(productId, token);
 
-            var exists = await _context.ProductTags.AnyAsync(pt =>pt.ProductId == model.ProductId && pt.TagId == model.TagId,token);
+            return Ok(productTags);
+        }
 
-            if (exists)
-                return Conflict("ProductTag already exists.");
+        
+        [HttpPost]
+        public async Task<IActionResult> Add([FromBody] ProductTagsAddModel model,CancellationToken token)
+        {
+            if (await _repository.ExistsAsync(model.ProductId, model.TagId, token))
+            {
+                return Conflict("Relationship already exists.");
+            }
 
             var productTag = new ProductTag
             {
@@ -42,92 +56,21 @@ namespace AspNet.Controllers
                 CreatedAt = DateTime.UtcNow
             };
 
-            _context.ProductTags.Add(productTag);
-
-            await _context.SaveChangesAsync(token);
+            await _repository.AddAsync(productTag, token);
 
             return Ok(productTag);
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAll(CancellationToken token)
-        {
-            var productTags = await _context.ProductTags
-                .AsNoTracking()
-                .Include(pt => pt.Product)
-                .Include(pt => pt.Tag)
-                .ToListAsync(token);
-
-            return Ok(productTags);
-        }
-
-        [HttpGet("{productId}/{tagId}")]
-        public async Task<IActionResult> GetById([FromRoute] int productId,[FromRoute] int tagId,CancellationToken token)
-        {
-            var productTag = await _context.ProductTags
-                .AsNoTracking()
-                .Include(pt => pt.Product)
-                .Include(pt => pt.Tag)
-                .FirstOrDefaultAsync(
-                    pt => pt.ProductId == productId && pt.TagId == tagId,token);
-
-            if (productTag == null)
-                return NotFound();
-
-            return Ok(productTag);
-        }
-
-
-        [HttpPut("{productId}/{tagId}")]
-        public async Task<IActionResult> UpdateProductTags([FromRoute] int productId,[FromRoute] int tagId,[FromBody] ProductTagUpdateModel model,CancellationToken token)
-        {
-            var productTag = await _context.ProductTags.FirstOrDefaultAsync(pt => pt.ProductId == productId && pt.TagId == tagId,token);
-
-            if (productTag == null)
-                return NotFound("ProductTag relationship not found.");
-
-            var productExists = await _context.Products.AnyAsync(p => p.Id == model.ProductId, token);
-
-            if (!productExists)
-                return NotFound("Product not found.");
-
-            var tagExists = await _context.Tags.AnyAsync(t => t.Id == model.TagId, token);
-
-            if (!tagExists)
-                return NotFound("Tag not found.");
-
-            var duplicate = await _context.ProductTags.AnyAsync(pt => pt.ProductId == model.ProductId && pt.TagId == model.TagId &&
-                      !(pt.ProductId == productId && pt.TagId == tagId),token);
-
-            if (duplicate)
-                return Conflict("This relationship already exists.");
-
-            productTag.ProductId = model.ProductId;
-            productTag.TagId = model.TagId;
-
-            await _context.SaveChangesAsync(token);
-
-            return Ok(productTag);
-        }
-
-
-
-
+        
         [HttpDelete("{productId}/{tagId}")]
         public async Task<IActionResult> Delete([FromRoute] int productId,[FromRoute] int tagId,CancellationToken token)
         {
-            var productTag = await _context.ProductTags
-                .FirstOrDefaultAsync(
-                    pt => pt.ProductId == productId &&
-                          pt.TagId == tagId,
-                    token);
+            var exists = await _repository.ExistsAsync(productId, tagId, token);
 
-            if (productTag == null)
-                return NotFound("ProductTag relationship not found.");
+            if (!exists)
+                return NotFound();
 
-            _context.ProductTags.Remove(productTag);
-
-            await _context.SaveChangesAsync(token);
+            await _repository.DeleteAsync(productId, tagId, token);
 
             return NoContent();
         }

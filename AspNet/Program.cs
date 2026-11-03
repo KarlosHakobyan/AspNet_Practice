@@ -21,6 +21,9 @@ namespace AspNet
 
             builder.Services.AddScoped<IProductRepository, ProductRepository>();
             builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+            builder.Services.AddScoped<ITagRepository, TagRepository>();
+            builder.Services.AddScoped<IProductDetailsRepository, ProductDetailsRepository>();
+            builder.Services.AddScoped<IProductTagRepository, ProductTagRepository>();
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
