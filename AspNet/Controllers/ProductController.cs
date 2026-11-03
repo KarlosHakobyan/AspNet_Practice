@@ -1,6 +1,7 @@
 ﻿using AspNet.Data;
 using AspNet.Entities;
 using AspNet.Models;
+using AspNet.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -8,64 +9,48 @@ namespace AspNet.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ProductController : ControllerBase
+    public class ProductController(IProductRepository repository) : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
-
-        public ProductController(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
+        private readonly IProductRepository _repository = repository;
 
         [HttpPost]
         public async Task<IActionResult> AddProduct([FromBody] ProductAddModel model, CancellationToken token)
         {
-            var categoryExists = await _context.Categories.AnyAsync(c => c.Id == model.CategoryId, token);
-
-            if (!categoryExists)
-                return BadRequest("Category does not exist.");
-
             var product = new Product
             {
                 Name = model.Name,
                 Price = model.Price,
                 CategoryId = model.CategoryId
             };
+            await _repository.AddAsync(product, token);
 
-            _context.Products.Add(product);
-            await _context.SaveChangesAsync(token);
-
-            return Ok(product);
+            return Ok();
         }
 
 
         [HttpGet]
         public async Task<IActionResult> GetProducts(CancellationToken token)
         {
-            var products = await _context.Products.ToListAsync(token);
+            var products = await _repository.GetAllAsync(token);
             return Ok(products);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProductById([FromRoute] int id, CancellationToken token)
         {
-            var product = await _context.Products.FirstOrDefaultAsync(e => e.Id == id, token);
-
+            var product = await _repository.GetByIdAsync(id, token);
 
             if (product == null)
-                return NotFound();
+            return NotFound();
 
             return Ok(product);
         }
 
 
         [HttpGet("{id}/category")]
-        public async Task<IActionResult> GetProductWithCategory([FromRoute] int id,CancellationToken token)
+        public async Task<IActionResult> GetProductWithCategory([FromRoute] int id, CancellationToken token)
         {
-            var product = await _context.Products
-                .Include(p => p.Category)
-                .FirstOrDefaultAsync(p => p.Id == id, token);
+            var product = await _repository.GetWithCategoryAsync(id, token);
 
             if (product == null)
                 return NotFound();
@@ -87,37 +72,12 @@ namespace AspNet.Controllers
             return Ok(result);
         }
 
-        //Miangamic Entitynerov get anel 
-        /*        [HttpGet("{id}/full")]
-                public async Task<IActionResult> GetFullProductInfo(
-                 [FromRoute] int id,
-                 CancellationToken token)
-                {
-                    var product = await _context.Products
-                        .Include(p => p.Category)
-                        .Include(p => p.Details)
-                        .Include(p => p.ProductTags)
-                            .ThenInclude(pt => pt.Tag)
-                        .FirstOrDefaultAsync(p => p.Id == id, token);
 
-                    if (product == null)
-                        return NotFound();
-
-                    return Ok(product);
-                }*/
-
-        //Modelnerov get anel
 
         [HttpGet("{id}/full")]
-        public async Task<IActionResult> GetFullProductInfo([FromRoute] int id,CancellationToken token)
+        public async Task<IActionResult> GetFullProductInfo([FromRoute] int id, CancellationToken token)
         {
-            var product = await _context.Products
-                .AsNoTracking()
-                .Include(p => p.Category)
-                .Include(p => p.Details)
-                .Include(p => p.ProductTags)
-                    .ThenInclude(pt => pt.Tag)
-                .FirstOrDefaultAsync(p => p.Id == id, token);
+            var product = await _repository.GetFullAsync(id, token);
 
             if (product == null)
                 return NotFound();
@@ -156,12 +116,9 @@ namespace AspNet.Controllers
         }
 
         [HttpGet("{id}/details")]
-        public async Task<IActionResult> GetProductWithDetails([FromRoute] int id,CancellationToken token)
+        public async Task<IActionResult> GetProductWithDetails([FromRoute] int id, CancellationToken token)
         {
-            var product = await _context.Products
-                .AsNoTracking()
-                .Include(p => p.Details)
-                .FirstOrDefaultAsync(p => p.Id == id, token);
+            var product = await _repository.GetWithDetailsAsync(id, token);
 
             if (product == null)
                 return NotFound();
@@ -189,31 +146,31 @@ namespace AspNet.Controllers
 
         public async Task<IActionResult> UpdateProductById([FromRoute] int id, [FromBody] ProductUpdateModel model, CancellationToken token)
         {
-            var product = await _context.Products.FirstOrDefaultAsync(e => e.Id == id, token);
+            var product = await _repository.GetByIdAsync(id,token);
             if (product == null)
                 return NotFound();
 
             product.Price = model.Price;
             product.Name = model.Name;
 
-            await _context.SaveChangesAsync(token);
+            await _repository.UpdateAsync(product, token);
             return Ok($"Product updated\n {product}");
-
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteProductById([FromRoute] int id, CancellationToken token)
+        public async Task<IActionResult> Delete([FromRoute] int id,CancellationToken token)
         {
-            var product = await _context.Products.FirstOrDefaultAsync(e => e.Id == id, token);
+            var product = await _repository.GetByIdAsync(id, token);
+
             if (product == null)
                 return NotFound();
 
-            _context.Products.Remove(product);
-            await _context.SaveChangesAsync(token);
-            return Ok("Product deleted");
+            await _repository.DeleteAsync(id, token);
 
+            return NoContent();
         }
-
-
     }
+
+
 }
+

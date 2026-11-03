@@ -1,5 +1,6 @@
 using AspNet.Data;
 using AspNet.Data.Seed;
+using AspNet.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 namespace AspNet
@@ -17,6 +18,8 @@ namespace AspNet
                     builder.Configuration.GetConnectionString("DefaultConnection")
                 )
             );
+
+            builder.Services.AddScoped<IProductRepository, ProductRepository>();
 
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
