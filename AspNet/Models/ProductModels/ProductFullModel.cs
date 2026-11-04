@@ -1,4 +1,8 @@
-﻿namespace AspNet.Models
+﻿using AspNet.Models.CategoryModels;
+using AspNet.Models.ProductDetailsModels;
+using AspNet.Models.TagModels;
+
+namespace AspNet.Models.ProductModels
 {
     public class ProductFullModel
     {

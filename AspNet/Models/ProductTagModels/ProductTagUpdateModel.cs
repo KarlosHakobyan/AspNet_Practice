@@ -1,6 +1,6 @@
-﻿namespace AspNet.Models
+﻿namespace AspNet.Models.ProductTadModels
 {
-    public class AddProductTagModel
+    public class ProductTagUpdateModel
     {
         public int ProductId { get; set; }
 

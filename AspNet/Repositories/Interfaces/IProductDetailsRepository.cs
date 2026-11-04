@@ -1,5 +1,6 @@
 ﻿using AspNet.Entities;
-using AspNet.Repositories.Generics;
+using AspNet.Repositories.Generic;
+
 
 namespace AspNet.Repositories.Interfaces
 {

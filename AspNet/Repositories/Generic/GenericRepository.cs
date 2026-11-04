@@ -1,23 +1,15 @@
 ﻿
 using AspNet.Data;
-using AspNet.Repositories.Generics;
+using AspNet.Repositories.Generic;
 using Microsoft.EntityFrameworkCore;
 
 namespace AspNet.Repositories.Generic
 {
-    public class GenericRepository<T> : IGenericRepository<T>
-        where T : class
+    public class GenericRepository<T>(ApplicationDbContext context) : IGenericRepository<T>  where T : class
     {
-        protected readonly ApplicationDbContext _context;
-        protected readonly DbSet<T> _dbSet;
+        protected readonly ApplicationDbContext _context = context;
+        protected readonly DbSet<T> _dbSet = context.Set<T>();
 
-        public GenericRepository(ApplicationDbContext context)
-        {
-            _context = context;
-            _dbSet = context.Set<T>();
-        }
-
-        
         public async Task<IEnumerable<T>> GetAllAsync(CancellationToken token = default)
         {
             return await _dbSet.AsNoTracking().ToListAsync(token);

@@ -1,15 +1,11 @@
-﻿namespace AspNet.Models
+﻿namespace AspNet.Models.ProductDetailsModels
 {
-    public class ProductDetailsAddModel
+    public class ProductDetailsUpdateModel
     {
-        public int ProductId { get; set; }
-
         public string? Description { get; set; }
 
         public string Manufacturer { get; set; } = default!;
 
         public int WarrantyMonths { get; set; }
-
-
     }
 }

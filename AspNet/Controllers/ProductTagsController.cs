@@ -1,5 +1,5 @@
 ﻿using AspNet.Entities;
-using AspNet.Models;
+using AspNet.Models.ProductTadModels;
 using AspNet.Repositories.Interfaces;
 using AspNet.Repositories.UnitOfWork;
 using Microsoft.AspNetCore.Mvc;

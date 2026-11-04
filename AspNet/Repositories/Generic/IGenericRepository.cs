@@ -1,4 +1,4 @@
-﻿namespace AspNet.Repositories.Generics
+﻿namespace AspNet.Repositories.Generic
 {
     public interface IGenericRepository<T> where T : class
     {

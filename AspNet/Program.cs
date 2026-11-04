@@ -3,6 +3,7 @@ using AspNet.Data.Seed;
 using AspNet.Repositories;
 using AspNet.Repositories.Interfaces;
 using AspNet.Repositories.UnitOfWork;
+using AspNet.Services.Products;
 using Microsoft.EntityFrameworkCore;
 
 namespace AspNet
@@ -27,6 +28,8 @@ namespace AspNet
             builder.Services.AddScoped<IProductDetailsRepository, ProductDetailsRepository>();
             builder.Services.AddScoped<IProductTagRepository, ProductTagRepository>();
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+            builder.Services.AddScoped<IProductService, ProductService>();
+            builder.Services.AddScoped<IProductDetailsService, ProductDetailsService>();
 
 
             builder.Services.AddEndpointsApiExplorer();

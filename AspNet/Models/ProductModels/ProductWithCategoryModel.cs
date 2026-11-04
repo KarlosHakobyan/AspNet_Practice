@@ -1,4 +1,6 @@
-﻿namespace AspNet.Models
+﻿using AspNet.Models.CategoryModels;
+
+namespace AspNet.Models.ProductModels
 {
     public class ProductWithCategoryModel
     {

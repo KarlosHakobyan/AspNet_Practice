@@ -1,30 +1,26 @@
-﻿
-using AspNet.Entities;
-using AspNet.Models;
-using AspNet.Repositories.Interfaces;
-using AspNet.Repositories.UnitOfWork;
+﻿using AspNet.Models.TagModels;
+using AspNet.Services.Products;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AspNet.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class TagsController(ITagRepository repository, IUnitOfWork uow) : ControllerBase
+    public class TagsController(ITagService service) : ControllerBase
     {
-        private readonly ITagRepository _repository = repository;
-        private readonly IUnitOfWork _uow = uow;
+        private readonly ITagService _service = service;
 
         [HttpGet]
         public async Task<IActionResult> GetAllTags(CancellationToken token)
         {
-            var tags = await _repository.GetAllAsync(token);
+            var tags = await _service.GetAllAsync(token);
             return Ok(tags);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetTagById([FromRoute] int id,CancellationToken token)
         {
-            var tag = await _repository.GetByIdAsync(id, token);
+            var tag = await _service.GetByIdAsync(id, token);
 
             if (tag == null)
                 return NotFound();
@@ -35,13 +31,7 @@ namespace AspNet.Controllers
         [HttpPost]
         public async Task<IActionResult> AddTag([FromBody] TagAddModel model,CancellationToken token)
         {
-            var tag = new Tag
-            {
-                Name = model.Name
-            };
-
-            await _repository.AddAsync(tag, token);
-            await _uow.SaveChangesAsync(token);
+          var tag = await _service.CreateAsync(model, token);
 
             return Ok( tag);
         }
@@ -49,37 +39,21 @@ namespace AspNet.Controllers
        [HttpPut("{id}")]
         public async Task<IActionResult> UpdateTag([FromRoute] int id,[FromBody] TagUpdateModel model,CancellationToken token)
         {
-            var tag = await _repository.GetByIdAsync(id, token);
+            var tag = await _service.UpdateAsync(id, model , token);
 
             if (tag == null)
                 return NotFound();
-
-            tag.Name = model.Name;
-
-            await _repository.UpdateAsync(tag, token);
-            await _uow.SaveChangesAsync(token);
-
-            return Ok(tag);
+            return Ok($"Tag updated\n {tag}");
+         
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTag(
-            [FromRoute] int id,
-            CancellationToken token)
+        public async Task<IActionResult> Delete([FromRoute] int id, CancellationToken token)
         {
-            var tag = await _repository.GetByIdAsync(id, token);
+            bool result = await _service.DeleteAsync(id, token);
 
-            if (tag == null)
+            if (result == false)
                 return NotFound();
-
-            var isUsed = await _repository.IsUsedAsync(id, token);
-
-            if (isUsed)
-                return Conflict(
-                    "Cannot delete tag because it is assigned to products.");
-
-            await _repository.DeleteAsync(id, token);
-            await _uow.SaveChangesAsync(token);
 
             return NoContent();
         }

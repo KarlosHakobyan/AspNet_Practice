@@ -1,6 +1,6 @@
 ﻿using AspNet.Entities;
 
-namespace AspNet.Models
+namespace AspNet.Models.ProductModels
 {
     public class ProductAddModel
     {

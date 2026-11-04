@@ -1,40 +1,34 @@
 ﻿
 using AspNet.Entities;
 using AspNet.Models;
+using AspNet.Models.CategoryModels;
+using AspNet.Models.ProductModels;
 using AspNet.Repositories.Interfaces;
 using AspNet.Repositories.UnitOfWork;
+using AspNet.Services.Products;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AspNet.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class CategoryController(ICategoryRepository repository, IUnitOfWork uow) : ControllerBase 
+    public class CategoryController(ICategoryService service) : ControllerBase 
     {
-        private readonly ICategoryRepository _repository = repository;
-        private readonly IUnitOfWork _uow = uow;
+        private readonly ICategoryService _service = service;
 
 
         [HttpPost]
         public async Task<IActionResult> AddCategory([FromBody] CategoryAddModel model,CancellationToken token)
         {
-            var category = new Category
-            {
-                Name = model.Name
-            };
-
-            await _repository.AddAsync(category, token);
-            await _uow.SaveChangesAsync(token);
-
-            return Ok(category);
+            await _service.CreateAsync(model, token);
+            return Ok();
         }
 
         
         [HttpGet]
         public async Task<IActionResult> GetCategories(CancellationToken token)
         {
-            var categories = await _repository.GetAllAsync(token);
-
+            var categories = await _service.GetAllAsync(token);
             return Ok(categories);
         }
 
@@ -42,7 +36,7 @@ namespace AspNet.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCategoryById([FromRoute] int id,CancellationToken token)
         {
-            var category = await _repository.GetByIdAsync(id, token);
+            var category = await _service.GetByIdAsync(id, token);
 
             if (category == null)
                 return NotFound();
@@ -50,11 +44,11 @@ namespace AspNet.Controllers
             return Ok(category);
         }
 
-      
+
         [HttpGet("{id}/products")]
-        public async Task<IActionResult> GetCategoryWithProducts([FromRoute] int id,CancellationToken token)
+        public async Task<IActionResult> GetCategoryWithProducts([FromRoute] int id, CancellationToken token)
         {
-            var category = await _repository.GetWithProductsAsync(id, token);
+            var category = await _service.GetWithProductsAsync(id, token);
 
             if (category == null)
                 return NotFound();
@@ -75,33 +69,24 @@ namespace AspNet.Controllers
             return Ok(result);
         }
 
-        
+
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateCategoryById([FromRoute] int id,[FromBody] CategoryUpdateModel model,CancellationToken token)
         {
-            var category = await _repository.GetByIdAsync(id, token);
+            var category = await _service.UpdateAsync(id, model, token);
 
             if (category == null)
                 return NotFound();
-
-            category.Name = model.Name;
-
-            await _repository.UpdateAsync(category, token);
-            await _uow.SaveChangesAsync(token);
-
-            return Ok(category);
+            return Ok($"Category updated\n {category}");
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategoryById([FromRoute] int id,CancellationToken token)
         {
-            var category = await _repository.GetByIdAsync(id, token);
+            bool result = await _service.DeleteAsync(id, token);
 
-            if (category == null)
+            if (result == false)
                 return NotFound();
-
-            await _repository.DeleteAsync(id, token);
-            await _uow.SaveChangesAsync(token);
 
             return NoContent();
         }

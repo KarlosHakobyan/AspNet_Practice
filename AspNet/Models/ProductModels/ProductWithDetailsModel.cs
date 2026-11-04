@@ -1,4 +1,6 @@
-﻿namespace AspNet.Models
+﻿using AspNet.Models.ProductDetailsModels;
+
+namespace AspNet.Models.ProductModels
 {
     public class ProductWithDetailsModel
     {

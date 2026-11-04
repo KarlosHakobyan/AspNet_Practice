@@ -1,6 +1,6 @@
-﻿namespace AspNet.Models
+﻿namespace AspNet.Models.TagModels
 {
-    public class CategoryModel
+    public class TagModel
     {
         public int Id { get; set; }
 

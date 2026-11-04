@@ -2,7 +2,6 @@
 using AspNet.Data;
 using AspNet.Entities;
 using AspNet.Repositories.Generic;
-using AspNet.Repositories.Generics;
 using AspNet.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 

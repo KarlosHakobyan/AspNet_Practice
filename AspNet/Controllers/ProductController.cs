@@ -1,29 +1,22 @@
-﻿using AspNet.Entities;
-using AspNet.Models;
-using AspNet.Repositories.Interfaces;
-using AspNet.Repositories.UnitOfWork;
+﻿using AspNet.Models.CategoryModels;
+using AspNet.Models.ProductDetailsModels;
+using AspNet.Models.ProductModels;
+using AspNet.Models.TagModels;
+using AspNet.Services.Products;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AspNet.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ProductController(IProductRepository repository, IUnitOfWork uow) : ControllerBase
+    public class ProductController(IProductService service) : ControllerBase
     {
-        private readonly IProductRepository _repository = repository;
-        private readonly IUnitOfWork _uow = uow;
+        private readonly IProductService _service = service;
 
         [HttpPost]
         public async Task<IActionResult> AddProduct([FromBody] ProductAddModel model, CancellationToken token)
         {
-            var product = new Product
-            {
-                Name = model.Name,
-                Price = model.Price,
-                CategoryId = model.CategoryId
-            };
-            await _repository.AddAsync(product, token);
-            await _uow.SaveChangesAsync(token);
+            await _service.CreateAsync(model, token);
 
             return Ok();
         }
@@ -32,14 +25,14 @@ namespace AspNet.Controllers
         [HttpGet]
         public async Task<IActionResult> GetProducts(CancellationToken token)
         {
-            var products = await _repository.GetAllAsync(token);
+            var products = await _service.GetAllAsync(token);
             return Ok(products);
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> GetProductById([FromRoute] int id, CancellationToken token)
         {
-            var product = await _repository.GetByIdAsync(id, token);
+            var product = await _service.GetByIdAsync(id, token);
 
             if (product == null)
             return NotFound();
@@ -51,7 +44,7 @@ namespace AspNet.Controllers
         [HttpGet("{id}/category")]
         public async Task<IActionResult> GetProductWithCategory([FromRoute] int id, CancellationToken token)
         {
-            var product = await _repository.GetWithCategoryAsync(id, token);
+            var product = await _service.GetWithCategoryAsync(id, token);
 
             if (product == null)
                 return NotFound();
@@ -78,7 +71,7 @@ namespace AspNet.Controllers
         [HttpGet("{id}/full")]
         public async Task<IActionResult> GetFullProductInfo([FromRoute] int id, CancellationToken token)
         {
-            var product = await _repository.GetFullAsync(id, token);
+            var product = await _service.GetFullAsync(id, token);
 
             if (product == null)
                 return NotFound();
@@ -119,7 +112,7 @@ namespace AspNet.Controllers
         [HttpGet("{id}/details")]
         public async Task<IActionResult> GetProductWithDetails([FromRoute] int id, CancellationToken token)
         {
-            var product = await _repository.GetWithDetailsAsync(id, token);
+            var product = await _service.GetWithDetailsAsync(id, token);
 
             if (product == null)
                 return NotFound();
@@ -147,29 +140,20 @@ namespace AspNet.Controllers
 
         public async Task<IActionResult> UpdateProductById([FromRoute] int id, [FromBody] ProductUpdateModel model, CancellationToken token)
         {
-            var product = await _repository.GetByIdAsync(id,token);
+            var product = await _service.UpdateAsync(id, model, token);
+
             if (product == null)
                 return NotFound();
-
-            product.Price = model.Price;
-            product.Name = model.Name;
-
-            await _repository.UpdateAsync(product, token);
-            await _uow.SaveChangesAsync(token);
-
             return Ok($"Product updated\n {product}");
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete([FromRoute] int id,CancellationToken token)
         {
-            var product = await _repository.GetByIdAsync(id, token);
+            bool result = await _service.DeleteAsync(id, token);
 
-            if (product == null)
+            if (result == false)
                 return NotFound();
-
-            await _repository.DeleteAsync(id, token);
-            await _uow.SaveChangesAsync(token);
 
             return NoContent();
         }
