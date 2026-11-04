@@ -1,17 +1,19 @@
 ﻿using AspNet.Entities;
 using AspNet.Models;
-using AspNet.Repositories;
+using AspNet.Repositories.Interfaces;
+using AspNet.Repositories.UnitOfWork;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AspNet.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ProductTagsController(IProductTagRepository repository) : ControllerBase
+    public class ProductTagsController(IProductTagRepository repository, IUnitOfWork uow) : ControllerBase
     {
         private readonly IProductTagRepository _repository = repository;
+        private readonly IUnitOfWork _uow = uow;
 
-        
+
         [HttpGet]
         public async Task<IActionResult> GetAll(CancellationToken token)
         {
@@ -57,6 +59,7 @@ namespace AspNet.Controllers
             };
 
             await _repository.AddAsync(productTag, token);
+            await _uow.SaveChangesAsync(token);
 
             return Ok(productTag);
         }
@@ -71,6 +74,7 @@ namespace AspNet.Controllers
                 return NotFound();
 
             await _repository.DeleteAsync(productId, tagId, token);
+            await _uow.SaveChangesAsync(token);
 
             return NoContent();
         }

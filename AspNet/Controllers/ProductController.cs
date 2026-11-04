@@ -1,17 +1,17 @@
-﻿using AspNet.Data;
-using AspNet.Entities;
+﻿using AspNet.Entities;
 using AspNet.Models;
-using AspNet.Repositories;
+using AspNet.Repositories.Interfaces;
+using AspNet.Repositories.UnitOfWork;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace AspNet.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ProductController(IProductRepository repository) : ControllerBase
+    public class ProductController(IProductRepository repository, IUnitOfWork uow) : ControllerBase
     {
         private readonly IProductRepository _repository = repository;
+        private readonly IUnitOfWork _uow = uow;
 
         [HttpPost]
         public async Task<IActionResult> AddProduct([FromBody] ProductAddModel model, CancellationToken token)
@@ -23,6 +23,7 @@ namespace AspNet.Controllers
                 CategoryId = model.CategoryId
             };
             await _repository.AddAsync(product, token);
+            await _uow.SaveChangesAsync(token);
 
             return Ok();
         }
@@ -154,6 +155,8 @@ namespace AspNet.Controllers
             product.Name = model.Name;
 
             await _repository.UpdateAsync(product, token);
+            await _uow.SaveChangesAsync(token);
+
             return Ok($"Product updated\n {product}");
         }
 
@@ -166,6 +169,7 @@ namespace AspNet.Controllers
                 return NotFound();
 
             await _repository.DeleteAsync(id, token);
+            await _uow.SaveChangesAsync(token);
 
             return NoContent();
         }

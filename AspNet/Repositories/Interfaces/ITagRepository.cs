@@ -1,12 +1,11 @@
-﻿
-using AspNet.Entities;
+﻿using AspNet.Entities;
 using AspNet.Repositories.Generic;
 using AspNet.Repositories.Generics;
 
-namespace AspNet.Repositories
+namespace AspNet.Repositories.Interfaces
 {
     public interface ITagRepository : IGenericRepository<Tag>
     {
-       Task<bool> IsUsedAsync(int tagId,CancellationToken token = default);
+        Task<bool> IsUsedAsync(int tagId, CancellationToken token = default);
     }
 }

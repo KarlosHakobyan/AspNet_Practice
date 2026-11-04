@@ -1,6 +1,7 @@
 ﻿
 using AspNet.Data;
 using AspNet.Entities;
+using AspNet.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace AspNet.Repositories
@@ -40,8 +41,7 @@ namespace AspNet.Repositories
         
         public async Task AddAsync(ProductTag productTag,CancellationToken token = default)
         {
-            await _context.ProductTags.AddAsync(productTag, token);
-            await _context.SaveChangesAsync(token);
+            await _context.ProductTags.AddAsync(productTag, token);         
         }
 
         
@@ -52,9 +52,7 @@ namespace AspNet.Repositories
             if (productTag == null)
                 return;
 
-            _context.ProductTags.Remove(productTag);
-
-            await _context.SaveChangesAsync(token);
+            _context.ProductTags.Remove(productTag);          
         }
 
         

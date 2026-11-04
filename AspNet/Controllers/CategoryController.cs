@@ -1,18 +1,20 @@
 ﻿
 using AspNet.Entities;
 using AspNet.Models;
-using AspNet.Repositories;
+using AspNet.Repositories.Interfaces;
+using AspNet.Repositories.UnitOfWork;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AspNet.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class CategoryController(ICategoryRepository repository) : ControllerBase
+    public class CategoryController(ICategoryRepository repository, IUnitOfWork uow) : ControllerBase 
     {
         private readonly ICategoryRepository _repository = repository;
+        private readonly IUnitOfWork _uow = uow;
 
-        
+
         [HttpPost]
         public async Task<IActionResult> AddCategory([FromBody] CategoryAddModel model,CancellationToken token)
         {
@@ -22,6 +24,7 @@ namespace AspNet.Controllers
             };
 
             await _repository.AddAsync(category, token);
+            await _uow.SaveChangesAsync(token);
 
             return Ok(category);
         }
@@ -84,6 +87,7 @@ namespace AspNet.Controllers
             category.Name = model.Name;
 
             await _repository.UpdateAsync(category, token);
+            await _uow.SaveChangesAsync(token);
 
             return Ok(category);
         }
@@ -97,6 +101,7 @@ namespace AspNet.Controllers
                 return NotFound();
 
             await _repository.DeleteAsync(id, token);
+            await _uow.SaveChangesAsync(token);
 
             return NoContent();
         }

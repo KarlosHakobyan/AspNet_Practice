@@ -1,16 +1,18 @@
 ﻿
 using AspNet.Entities;
 using AspNet.Models;
-using AspNet.Repositories;
+using AspNet.Repositories.Interfaces;
+using AspNet.Repositories.UnitOfWork;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AspNet.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class TagsController(ITagRepository repository) : ControllerBase
+    public class TagsController(ITagRepository repository, IUnitOfWork uow) : ControllerBase
     {
         private readonly ITagRepository _repository = repository;
+        private readonly IUnitOfWork _uow = uow;
 
         [HttpGet]
         public async Task<IActionResult> GetAllTags(CancellationToken token)
@@ -39,6 +41,7 @@ namespace AspNet.Controllers
             };
 
             await _repository.AddAsync(tag, token);
+            await _uow.SaveChangesAsync(token);
 
             return Ok( tag);
         }
@@ -54,6 +57,7 @@ namespace AspNet.Controllers
             tag.Name = model.Name;
 
             await _repository.UpdateAsync(tag, token);
+            await _uow.SaveChangesAsync(token);
 
             return Ok(tag);
         }
@@ -75,6 +79,7 @@ namespace AspNet.Controllers
                     "Cannot delete tag because it is assigned to products.");
 
             await _repository.DeleteAsync(id, token);
+            await _uow.SaveChangesAsync(token);
 
             return NoContent();
         }

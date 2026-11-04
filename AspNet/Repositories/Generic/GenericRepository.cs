@@ -33,13 +33,12 @@ namespace AspNet.Repositories.Generic
         public async Task AddAsync(T entity,CancellationToken token = default)
         {
             await _dbSet.AddAsync(entity, token);
-            await _context.SaveChangesAsync(token);
         }
 
-        public async Task UpdateAsync(T entity,CancellationToken token = default)
+        public Task UpdateAsync(T entity,CancellationToken token = default)
         {
             _dbSet.Update(entity);
-            await _context.SaveChangesAsync(token);
+            return Task.CompletedTask;
         }
 
         public async Task DeleteAsync(int id,CancellationToken token = default)
@@ -50,7 +49,6 @@ namespace AspNet.Repositories.Generic
                 return;
 
             _dbSet.Remove(entity);
-            await _context.SaveChangesAsync(token);
         }
     }
 }

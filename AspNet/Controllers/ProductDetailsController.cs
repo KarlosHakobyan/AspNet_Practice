@@ -1,7 +1,8 @@
 ﻿
 using AspNet.Entities;
 using AspNet.Models;
-using AspNet.Repositories;
+using AspNet.Repositories.Interfaces;
+using AspNet.Repositories.UnitOfWork;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AspNet.Controllers
@@ -9,9 +10,10 @@ namespace AspNet.Controllers
     [ApiController]
     [Route("api/[controller]")]
     public class ProductDetailsController(
-        IProductDetailsRepository repository) : ControllerBase
+        IProductDetailsRepository repository , IUnitOfWork uow) : ControllerBase
     {
         private readonly IProductDetailsRepository _repository = repository;
+        private readonly IUnitOfWork _uow = uow;
 
         [HttpGet("{productId}")]
         public async Task<IActionResult> GetByProductId([FromRoute] int productId,CancellationToken token)
@@ -43,6 +45,7 @@ namespace AspNet.Controllers
             };
 
             await _repository.AddAsync(details, token);
+            await _uow.SaveChangesAsync(token);
 
             return Ok(details);
         }
@@ -60,6 +63,7 @@ namespace AspNet.Controllers
             details.WarrantyMonths = model.WarrantyMonths;
 
             await _repository.UpdateAsync(details, token);
+            await _uow.SaveChangesAsync(token);
 
             return Ok(details);
         }
@@ -74,6 +78,7 @@ namespace AspNet.Controllers
                 return NotFound();
 
             await _repository.DeleteAsync(productId, token);
+            await _uow.SaveChangesAsync(token);
 
             return NoContent();
         }
