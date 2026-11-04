@@ -1,0 +1,56 @@
+﻿
+using AspNet.Data;
+using AspNet.Repositories.Generics;
+using Microsoft.EntityFrameworkCore;
+
+namespace AspNet.Repositories.Generic
+{
+    public class GenericRepository<T> : IGenericRepository<T>
+        where T : class
+    {
+        protected readonly ApplicationDbContext _context;
+        protected readonly DbSet<T> _dbSet;
+
+        public GenericRepository(ApplicationDbContext context)
+        {
+            _context = context;
+            _dbSet = context.Set<T>();
+        }
+
+        
+        public async Task<IEnumerable<T>> GetAllAsync(CancellationToken token = default)
+        {
+            return await _dbSet.AsNoTracking().ToListAsync(token);
+        }
+
+        
+        public async Task<T?> GetByIdAsync(int id,CancellationToken token = default)
+        {
+            return await _dbSet.FindAsync(new object?[] { id },token);
+        }
+
+        
+        public async Task AddAsync(T entity,CancellationToken token = default)
+        {
+            await _dbSet.AddAsync(entity, token);
+            await _context.SaveChangesAsync(token);
+        }
+
+        public async Task UpdateAsync(T entity,CancellationToken token = default)
+        {
+            _dbSet.Update(entity);
+            await _context.SaveChangesAsync(token);
+        }
+
+        public async Task DeleteAsync(int id,CancellationToken token = default)
+        {
+            var entity = await GetByIdAsync(id, token);
+
+            if (entity == null)
+                return;
+
+            _dbSet.Remove(entity);
+            await _context.SaveChangesAsync(token);
+        }
+    }
+}

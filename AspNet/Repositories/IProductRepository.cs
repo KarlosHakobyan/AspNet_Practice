@@ -1,19 +1,10 @@
 ﻿using AspNet.Entities;
+using AspNet.Repositories.Generics;
 
 namespace AspNet.Repositories
 {
-    public interface IProductRepository
+    public interface IProductRepository : IGenericRepository<Product>
     {
-        Task<IEnumerable<Product>> GetAllAsync(CancellationToken token = default);
-
-        Task<Product?> GetByIdAsync(int productId,CancellationToken token = default);
-
-        Task AddAsync(Product product,CancellationToken token = default);
-
-        Task UpdateAsync(Product product,CancellationToken token = default);
-
-        Task DeleteAsync(int productId,CancellationToken token = default);
-
         Task<Product?> GetWithCategoryAsync(int productId,CancellationToken token = default);
 
         Task<Product?> GetWithDetailsAsync(int productId,CancellationToken token = default);

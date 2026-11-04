@@ -16,7 +16,7 @@ namespace AspNet.Controllers
         [HttpGet("{productId}")]
         public async Task<IActionResult> GetByProductId([FromRoute] int productId,CancellationToken token)
         {
-            var details = await _repository.GetByProductIdAsync(productId, token);
+            var details = await _repository.GetByIdAsync(productId, token);
 
             if (details == null)
                 return NotFound();
@@ -29,7 +29,7 @@ namespace AspNet.Controllers
         public async Task<IActionResult> AddDetail([FromBody] ProductDetailsAddModel model,
             CancellationToken token)
         {
-            var existing = await _repository.GetByProductIdAsync(model.ProductId, token);
+            var existing = await _repository.GetByIdAsync(model.ProductId, token);
 
             if (existing != null)
                 return Conflict("Product details already exist.");
@@ -50,7 +50,7 @@ namespace AspNet.Controllers
         [HttpPut("{productId}")]
         public async Task<IActionResult> Update([FromRoute] int productId,[FromBody] ProductDetailsUpdateModel model,CancellationToken token)
         {
-            var details = await _repository.GetByProductIdAsync(productId, token);
+            var details = await _repository.GetByIdAsync(productId, token);
 
             if (details == null)
                 return NotFound();
@@ -59,7 +59,7 @@ namespace AspNet.Controllers
             details.Manufacturer = model.Manufacturer;
             details.WarrantyMonths = model.WarrantyMonths;
 
-            await _repository.UpdateAsync(productId, details, token);
+            await _repository.UpdateAsync(details, token);
 
             return Ok(details);
         }
@@ -68,7 +68,7 @@ namespace AspNet.Controllers
         [HttpDelete("{productId}")]
         public async Task<IActionResult> Delete([FromRoute] int productId,CancellationToken token)
         {
-            var details = await _repository.GetByProductIdAsync(productId, token);
+            var details = await _repository.GetByIdAsync(productId, token);
 
             if (details == null)
                 return NotFound();

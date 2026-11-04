@@ -8,8 +8,7 @@ namespace AspNet.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class CategoryController(
-        ICategoryRepository repository) : ControllerBase
+    public class CategoryController(ICategoryRepository repository) : ControllerBase
     {
         private readonly ICategoryRepository _repository = repository;
 
@@ -84,7 +83,7 @@ namespace AspNet.Controllers
 
             category.Name = model.Name;
 
-            await _repository.UpdateAsync(id, category, token);
+            await _repository.UpdateAsync(category, token);
 
             return Ok(category);
         }

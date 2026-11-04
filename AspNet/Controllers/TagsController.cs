@@ -53,7 +53,7 @@ namespace AspNet.Controllers
 
             tag.Name = model.Name;
 
-            await _repository.UpdateAsync(id, tag, token);
+            await _repository.UpdateAsync(tag, token);
 
             return Ok(tag);
         }

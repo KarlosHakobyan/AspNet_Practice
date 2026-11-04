@@ -5,8 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AspNet.Repositories
 {
-    public class ProductTagRepository(ApplicationDbContext context)
-        : IProductTagRepository
+    public class ProductTagRepository(ApplicationDbContext context) : IProductTagRepository
     {
         private readonly ApplicationDbContext _context = context;
 

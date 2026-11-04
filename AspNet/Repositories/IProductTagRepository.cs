@@ -1,5 +1,4 @@
-﻿
-using AspNet.Entities;
+﻿using AspNet.Entities;
 
 namespace AspNet.Repositories
 {

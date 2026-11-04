@@ -1,14 +1,10 @@
 ﻿using AspNet.Entities;
+using AspNet.Repositories.Generics;
 
 namespace AspNet.Repositories
 {
-    public interface ICategoryRepository
+    public interface ICategoryRepository : IGenericRepository<Category>
     {
-        Task AddAsync(Category category, CancellationToken token = default);
-        Task DeleteAsync(int categoryId, CancellationToken token = default);
-        Task<IEnumerable<Category>> GetAllAsync(CancellationToken token = default);
-        Task<Category?> GetByIdAsync(int categoryId, CancellationToken token = default);
         Task<Category?> GetWithProductsAsync(int categoryId, CancellationToken token = default);
-        Task UpdateAsync(int categoryId, Category category, CancellationToken token);
     }
 }
