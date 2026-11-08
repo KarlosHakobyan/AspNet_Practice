@@ -1,4 +1,9 @@
-﻿using AspNet.Models.CategoryModels;
+﻿using AspNet.Entities;
+using AspNet.Models.CategoryModels;
+using AspNet.Models.DTOs.Categories;
+using AspNet.Models.DTOs.ProductDetails;
+using AspNet.Models.DTOs.Products;
+using AspNet.Models.DTOs.Tags;
 using AspNet.Models.ProductDetailsModels;
 using AspNet.Models.ProductModels;
 using AspNet.Models.TagModels;
@@ -49,21 +54,7 @@ namespace AspNet.Controllers
             if (product == null)
                 return NotFound();
 
-            var result = new ProductWithCategoryModel
-            {
-                Id = product.Id,
-                Name = product.Name,
-
-                Category = product.Category == null
-                    ? null
-                    : new CategoryModel
-                    {
-                        Id = product.Category.Id,
-                        Name = product.Category.Name
-                    }
-            };
-
-            return Ok(result);
+            return Ok(MapToDto(product));           
         }
 
 
@@ -76,37 +67,8 @@ namespace AspNet.Controllers
             if (product == null)
                 return NotFound();
 
-            var result = new ProductFullModel
-            {
-                Id = product.Id,
-                Name = product.Name,
-                Price = product.Price,
+            return Ok(MapToDtoForFullProductInfo(product));
 
-                Category = product.Category == null
-                    ? null
-                    : new CategoryModel
-                    {
-                        Id = product.Category.Id,
-                        Name = product.Category.Name
-                    },
-
-                Details = product.Details == null
-                    ? null
-                    : new ProductDetailsModel
-                    {
-                        Description = product.Details.Description,
-                        Manufacturer = product.Details.Manufacturer,
-                        WarrantyMonths = product.Details.WarrantyMonths
-                    },
-
-                Tags = product.ProductTags.Select(pt => new TagModel
-                {
-                    Id = pt.Tag.Id,
-                    Name = pt.Tag.Name
-                }).ToList()
-            };
-
-            return Ok(result);
         }
 
         [HttpGet("{id}/details")]
@@ -157,8 +119,62 @@ namespace AspNet.Controllers
 
             return NoContent();
         }
+
+
+        private static ProductDto MapToDto(Product product)
+        {
+            return new ProductDto
+            {
+                Id = product.Id,
+                Name = product.Name,
+                Price = product.Price,
+
+                Category = product.Category == null
+                    ? null
+                    : new CategoryDto
+                    {
+                        Id = product.Category.Id,
+                        Name = product.Category.Name
+                    }
+            };
+        }
+
+        private static ProductFullDto MapToDtoForFullProductInfo(Product product)
+        {
+            return new ProductFullDto
+            {
+
+                Id = product.Id,
+                Name = product.Name,
+                Price = product.Price,
+
+                Category = product.Category == null
+                    ? null
+                    : new CategoryDto
+                    {
+                        Id = product.Category.Id,
+                        Name = product.Category.Name
+                    },
+
+                Details = product.Details == null
+                    ? null
+                    : new ProductDetailsDto
+                    {
+                        Description = product.Details.Description,
+                        Manufacturer = product.Details.Manufacturer,
+                        WarrantyMonths = product.Details.WarrantyMonths
+                    },
+
+                Tags = product.ProductTags.Select(pt => new TagDto
+                {
+                    Id = pt.Tag.Id,
+                    Name = pt.Tag.Name
+                }).ToList()
+            };
+        }
+
+        }
     }
 
 
-}
 
