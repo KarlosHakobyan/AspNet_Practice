@@ -1,8 +1,8 @@
-﻿using AspNet.Models.TagModels;
-using AspNet.Services.Products;
+﻿using AspNet.Api.Services.Products;
+using AspNet.Domain.Models.TagModels;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AspNet.Controllers
+namespace AspNet.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
@@ -18,7 +18,7 @@ namespace AspNet.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetTagById([FromRoute] int id,CancellationToken token)
+        public async Task<IActionResult> GetTagById([FromRoute] int id, CancellationToken token)
         {
             var tag = await _service.GetByIdAsync(id, token);
 
@@ -29,22 +29,22 @@ namespace AspNet.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddTag([FromBody] TagAddModel model,CancellationToken token)
+        public async Task<IActionResult> AddTag([FromBody] TagAddModel model, CancellationToken token)
         {
-          var tag = await _service.CreateAsync(model, token);
+            var tag = await _service.CreateAsync(model, token);
 
-            return Ok( tag);
+            return Ok(tag);
         }
 
-       [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateTag([FromRoute] int id,[FromBody] TagUpdateModel model,CancellationToken token)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateTag([FromRoute] int id, [FromBody] TagUpdateModel model, CancellationToken token)
         {
-            var tag = await _service.UpdateAsync(id, model , token);
+            var tag = await _service.UpdateAsync(id, model, token);
 
             if (tag == null)
                 return NotFound();
             return Ok($"Tag updated\n {tag}");
-         
+
         }
 
         [HttpDelete("{id}")]

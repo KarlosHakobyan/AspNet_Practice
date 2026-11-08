@@ -1,21 +1,15 @@
-﻿using AspNet.Entities;
-using AspNet.Models.CategoryModels;
-using AspNet.Models.DTOs.Categories;
-using AspNet.Models.DTOs.ProductDetails;
-using AspNet.Models.DTOs.Products;
-using AspNet.Models.DTOs.Tags;
-using AspNet.Models.ProductDetailsModels;
-using AspNet.Models.ProductModels;
-using AspNet.Models.TagModels;
-using AspNet.Services.Products;
+﻿using AspNet.Api.Models.DTOs.Products;
+using AspNet.Api.Services.Products;
+using AspNet.Domain.Models.ProductDetailsModels;
+using AspNet.Domain.Models.ProductModels;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AspNet.Controllers
+namespace AspNet.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ProductController(IProductService service,IMapper mapper) : ControllerBase
+    public class ProductController(IProductService service, IMapper mapper) : ControllerBase
     {
         private readonly IProductService _service = service;
         private readonly IMapper _mapper = mapper;
@@ -42,7 +36,7 @@ namespace AspNet.Controllers
             var product = await _service.GetByIdAsync(id, token);
 
             if (product == null)
-            return NotFound();
+                return NotFound();
 
             return Ok(product);
         }
@@ -112,7 +106,7 @@ namespace AspNet.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete([FromRoute] int id,CancellationToken token)
+        public async Task<IActionResult> Delete([FromRoute] int id, CancellationToken token)
         {
             bool result = await _service.DeleteAsync(id, token);
 
@@ -120,7 +114,7 @@ namespace AspNet.Controllers
                 return NotFound();
 
             return NoContent();
-        }   
+        }
     }
 }
 

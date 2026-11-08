@@ -1,30 +1,25 @@
-﻿
-using AspNet.Entities;
-using AspNet.Models;
-using AspNet.Models.CategoryModels;
-using AspNet.Models.ProductModels;
-using AspNet.Repositories.Interfaces;
-using AspNet.Repositories.UnitOfWork;
-using AspNet.Services.Products;
+﻿using AspNet.Api.Services.Products;
+using AspNet.Domain.Models.CategoryModels;
+using AspNet.Domain.Models.ProductModels;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AspNet.Controllers
+namespace AspNet.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class CategoryController(ICategoryService service) : ControllerBase 
+    public class CategoryController(ICategoryService service) : ControllerBase
     {
         private readonly ICategoryService _service = service;
 
 
         [HttpPost]
-        public async Task<IActionResult> AddCategory([FromBody] CategoryAddModel model,CancellationToken token)
+        public async Task<IActionResult> AddCategory([FromBody] CategoryAddModel model, CancellationToken token)
         {
             await _service.CreateAsync(model, token);
             return Ok();
         }
 
-        
+
         [HttpGet]
         public async Task<IActionResult> GetCategories(CancellationToken token)
         {
@@ -32,9 +27,9 @@ namespace AspNet.Controllers
             return Ok(categories);
         }
 
-        
+
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetCategoryById([FromRoute] int id,CancellationToken token)
+        public async Task<IActionResult> GetCategoryById([FromRoute] int id, CancellationToken token)
         {
             var category = await _service.GetByIdAsync(id, token);
 
@@ -71,7 +66,7 @@ namespace AspNet.Controllers
 
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateCategoryById([FromRoute] int id,[FromBody] CategoryUpdateModel model,CancellationToken token)
+        public async Task<IActionResult> UpdateCategoryById([FromRoute] int id, [FromBody] CategoryUpdateModel model, CancellationToken token)
         {
             var category = await _service.UpdateAsync(id, model, token);
 
@@ -81,7 +76,7 @@ namespace AspNet.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCategoryById([FromRoute] int id,CancellationToken token)
+        public async Task<IActionResult> DeleteCategoryById([FromRoute] int id, CancellationToken token)
         {
             bool result = await _service.DeleteAsync(id, token);
 

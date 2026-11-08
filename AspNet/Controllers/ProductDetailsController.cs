@@ -1,8 +1,8 @@
-﻿using AspNet.Models.ProductDetailsModels;
-using AspNet.Services.Products;
+﻿using AspNet.Api.Services.Products;
+using AspNet.Domain.Models.ProductDetailsModels;
 using Microsoft.AspNetCore.Mvc;
 
-namespace AspNet.Controllers
+namespace AspNet.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
