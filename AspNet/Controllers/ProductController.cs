@@ -8,15 +8,17 @@ using AspNet.Models.ProductDetailsModels;
 using AspNet.Models.ProductModels;
 using AspNet.Models.TagModels;
 using AspNet.Services.Products;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AspNet.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ProductController(IProductService service) : ControllerBase
+    public class ProductController(IProductService service,IMapper mapper) : ControllerBase
     {
         private readonly IProductService _service = service;
+        private readonly IMapper _mapper = mapper;
 
         [HttpPost]
         public async Task<IActionResult> AddProduct([FromBody] ProductAddModel model, CancellationToken token)
@@ -54,7 +56,7 @@ namespace AspNet.Controllers
             if (product == null)
                 return NotFound();
 
-            return Ok(MapToDto(product));           
+            return Ok(_mapper.Map<ProductDto>(product));
         }
 
 
@@ -67,7 +69,7 @@ namespace AspNet.Controllers
             if (product == null)
                 return NotFound();
 
-            return Ok(MapToDtoForFullProductInfo(product));
+            return Ok(_mapper.Map<ProductFullDto>(product));
 
         }
 
@@ -118,63 +120,9 @@ namespace AspNet.Controllers
                 return NotFound();
 
             return NoContent();
-        }
-
-
-        private static ProductDto MapToDto(Product product)
-        {
-            return new ProductDto
-            {
-                Id = product.Id,
-                Name = product.Name,
-                Price = product.Price,
-
-                Category = product.Category == null
-                    ? null
-                    : new CategoryDto
-                    {
-                        Id = product.Category.Id,
-                        Name = product.Category.Name
-                    }
-            };
-        }
-
-        private static ProductFullDto MapToDtoForFullProductInfo(Product product)
-        {
-            return new ProductFullDto
-            {
-
-                Id = product.Id,
-                Name = product.Name,
-                Price = product.Price,
-
-                Category = product.Category == null
-                    ? null
-                    : new CategoryDto
-                    {
-                        Id = product.Category.Id,
-                        Name = product.Category.Name
-                    },
-
-                Details = product.Details == null
-                    ? null
-                    : new ProductDetailsDto
-                    {
-                        Description = product.Details.Description,
-                        Manufacturer = product.Details.Manufacturer,
-                        WarrantyMonths = product.Details.WarrantyMonths
-                    },
-
-                Tags = product.ProductTags.Select(pt => new TagDto
-                {
-                    Id = pt.Tag.Id,
-                    Name = pt.Tag.Name
-                }).ToList()
-            };
-        }
-
-        }
+        }   
     }
+}
 
 
 

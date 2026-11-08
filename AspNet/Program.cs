@@ -1,10 +1,12 @@
 using AspNet.Data;
 using AspNet.Data.Seed;
+using AspNet.Mapping;
 using AspNet.Repositories;
 using AspNet.Repositories.Interfaces;
 using AspNet.Repositories.UnitOfWork;
 using AspNet.Services.Products;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace AspNet
 {
@@ -30,6 +32,7 @@ namespace AspNet
             builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
             builder.Services.AddScoped<IProductService, ProductService>();
             builder.Services.AddScoped<IProductDetailsService, ProductDetailsService>();
+            builder.Services.AddAutoMapper(cfg =>{cfg.AddMaps(typeof(ProductProfile).Assembly);});
 
 
             builder.Services.AddEndpointsApiExplorer();
