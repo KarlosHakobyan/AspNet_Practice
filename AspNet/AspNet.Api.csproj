@@ -24,6 +24,7 @@
   <ItemGroup>
     <ProjectReference Include="..\AspNet.BLL\AspNet.BLL.csproj" />
     <ProjectReference Include="..\AspNet.Data\AspNet.Data.csproj" />
+    <ProjectReference Include="..\AspNet.Domain\AspNet.Domain.csproj" />
   </ItemGroup>
 
 </Project>
