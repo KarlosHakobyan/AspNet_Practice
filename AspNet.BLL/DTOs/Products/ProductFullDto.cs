@@ -1,7 +1,7 @@
-﻿using AspNet.Api.Models.DTOs.ProductDetails;
-using AspNet.Api.Models.DTOs.Tags;
+﻿using AspNet.BLL.DTOs.ProductDetails;
+using AspNet.BLL.DTOs.Tags;
 
-namespace AspNet.Api.Models.DTOs.Products
+namespace AspNet.BLL.DTOs.Products
 {
     public class ProductFullDto : ProductDto
     {

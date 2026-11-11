@@ -22,7 +22,7 @@ namespace AspNet.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("AspNet.Entities.Category", b =>
+            modelBuilder.Entity("AspNet.Domain.Entities.Category", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -39,7 +39,7 @@ namespace AspNet.Migrations
                     b.ToTable("Categories");
                 });
 
-            modelBuilder.Entity("AspNet.Entities.Product", b =>
+            modelBuilder.Entity("AspNet.Domain.Entities.Product", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -64,16 +64,13 @@ namespace AspNet.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("AspNet.Entities.ProductDetails", b =>
+            modelBuilder.Entity("AspNet.Domain.Entities.ProductDetails", b =>
                 {
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
 
                     b.Property<string>("Manufacturer")
                         .IsRequired()
@@ -87,7 +84,7 @@ namespace AspNet.Migrations
                     b.ToTable("ProductDetails");
                 });
 
-            modelBuilder.Entity("AspNet.Entities.ProductTag", b =>
+            modelBuilder.Entity("AspNet.Domain.Entities.ProductTag", b =>
                 {
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
@@ -105,7 +102,7 @@ namespace AspNet.Migrations
                     b.ToTable("ProductTags");
                 });
 
-            modelBuilder.Entity("AspNet.Entities.Tag", b =>
+            modelBuilder.Entity("AspNet.Domain.Entities.Tag", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -122,9 +119,9 @@ namespace AspNet.Migrations
                     b.ToTable("Tags");
                 });
 
-            modelBuilder.Entity("AspNet.Entities.Product", b =>
+            modelBuilder.Entity("AspNet.Domain.Entities.Product", b =>
                 {
-                    b.HasOne("AspNet.Entities.Category", "Category")
+                    b.HasOne("AspNet.Domain.Entities.Category", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -133,26 +130,26 @@ namespace AspNet.Migrations
                     b.Navigation("Category");
                 });
 
-            modelBuilder.Entity("AspNet.Entities.ProductDetails", b =>
+            modelBuilder.Entity("AspNet.Domain.Entities.ProductDetails", b =>
                 {
-                    b.HasOne("AspNet.Entities.Product", "Product")
+                    b.HasOne("AspNet.Domain.Entities.Product", "Product")
                         .WithOne("Details")
-                        .HasForeignKey("AspNet.Entities.ProductDetails", "ProductId")
+                        .HasForeignKey("AspNet.Domain.Entities.ProductDetails", "ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("AspNet.Entities.ProductTag", b =>
+            modelBuilder.Entity("AspNet.Domain.Entities.ProductTag", b =>
                 {
-                    b.HasOne("AspNet.Entities.Product", "Product")
+                    b.HasOne("AspNet.Domain.Entities.Product", "Product")
                         .WithMany("ProductTags")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("AspNet.Entities.Tag", "Tag")
+                    b.HasOne("AspNet.Domain.Entities.Tag", "Tag")
                         .WithMany("ProductTags")
                         .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -163,19 +160,19 @@ namespace AspNet.Migrations
                     b.Navigation("Tag");
                 });
 
-            modelBuilder.Entity("AspNet.Entities.Category", b =>
+            modelBuilder.Entity("AspNet.Domain.Entities.Category", b =>
                 {
                     b.Navigation("Products");
                 });
 
-            modelBuilder.Entity("AspNet.Entities.Product", b =>
+            modelBuilder.Entity("AspNet.Domain.Entities.Product", b =>
                 {
                     b.Navigation("Details");
 
                     b.Navigation("ProductTags");
                 });
 
-            modelBuilder.Entity("AspNet.Entities.Tag", b =>
+            modelBuilder.Entity("AspNet.Domain.Entities.Tag", b =>
                 {
                     b.Navigation("ProductTags");
                 });

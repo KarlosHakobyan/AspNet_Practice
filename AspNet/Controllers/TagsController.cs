@@ -1,20 +1,23 @@
-﻿using AspNet.Api.Services.Products;
+﻿using AspNet.BLL.DTOs.Tags;
+using AspNet.BLL.Services.Products;
 using AspNet.Domain.Models.TagModels;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AspNet.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class TagsController(ITagService service) : ControllerBase
+    public class TagsController(ITagService service, IMapper mapper) : ControllerBase
     {
         private readonly ITagService _service = service;
+        private readonly IMapper _mapper = mapper;
 
-        [HttpGet]
+    [HttpGet]
         public async Task<IActionResult> GetAllTags(CancellationToken token)
         {
             var tags = await _service.GetAllAsync(token);
-            return Ok(tags);
+            return Ok(_mapper.Map<IEnumerable<TagDto>>(tags));
         }
 
         [HttpGet("{id}")]
@@ -25,7 +28,7 @@ namespace AspNet.Api.Controllers
             if (tag == null)
                 return NotFound();
 
-            return Ok(tag);
+            return Ok(_mapper.Map<TagDto>(tag));
         }
 
         [HttpPost]
@@ -33,7 +36,7 @@ namespace AspNet.Api.Controllers
         {
             var tag = await _service.CreateAsync(model, token);
 
-            return Ok(tag);
+            return Ok(_mapper.Map<TagDto>(tag)); ;
         }
 
         [HttpPut("{id}")]
@@ -43,8 +46,8 @@ namespace AspNet.Api.Controllers
 
             if (tag == null)
                 return NotFound();
-            return Ok($"Tag updated\n {tag}");
 
+            return Ok($"Tag updated\n {_mapper.Map<TagDto>(tag)}");
         }
 
         [HttpDelete("{id}")]

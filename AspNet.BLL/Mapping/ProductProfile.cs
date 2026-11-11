@@ -1,29 +1,32 @@
-﻿using AspNet.Api.Models.DTOs.Categories;
-using AspNet.Api.Models.DTOs.ProductDetails;
-using AspNet.Api.Models.DTOs.Products;
-using AspNet.Api.Models.DTOs.Tags;
+﻿using AspNet.BLL.DTOs.Categories;
+using AspNet.BLL.DTOs.ProductDetails;
+using AspNet.BLL.DTOs.Products;
+using AspNet.BLL.DTOs.Tags;
 using AspNet.Domain.Entities;
 using AutoMapper;
 
-namespace AspNet.Api.Mapping
+namespace AspNet.BLL.Mapping
 {
     public class ProductProfile : Profile
     {
         public ProductProfile()
         {
-
+            CreateMap<Product, ProductOnlyDto>();
             CreateMap<Product, ProductDto>();
             CreateMap<Category, CategoryDto>();
             CreateMap<ProductDetails, ProductDetailsDto>();
             CreateMap<Tag, TagDto>();
 
-            CreateMap<Product, ProductFullDto>()
-             .ForMember(
-                dest => dest.Tags,
-                opt => opt.MapFrom(src =>
-                src.ProductTags.Where(pt => pt.Tag != null)
-                .Select(pt => pt.Tag!)));
+            CreateMap<Category, CategoryWithProductsDto>();
+            CreateMap<Product, ProductWithDetailsDto>();
 
+
+            CreateMap<Product, ProductFullDto>()
+                .ForMember(
+                   dest => dest.Tags,
+                  opt => opt.MapFrom(src =>
+                  src.ProductTags.Where(pt => pt.Tag != null)
+                 .Select(pt => pt.Tag!)));
         }
     }
 }

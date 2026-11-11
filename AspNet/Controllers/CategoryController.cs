@@ -1,15 +1,18 @@
-﻿using AspNet.Api.Services.Products;
+﻿using AspNet.BLL.DTOs.Categories;
+using AspNet.BLL.Services.Products;
 using AspNet.Domain.Models.CategoryModels;
 using AspNet.Domain.Models.ProductModels;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AspNet.Api.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class CategoryController(ICategoryService service) : ControllerBase
+    public class CategoryController(ICategoryService service, IMapper mapper) : ControllerBase
     {
         private readonly ICategoryService _service = service;
+        private readonly IMapper _mapper = mapper;
 
 
         [HttpPost]
@@ -20,11 +23,13 @@ namespace AspNet.Api.Controllers
         }
 
 
+
         [HttpGet]
         public async Task<IActionResult> GetCategories(CancellationToken token)
         {
             var categories = await _service.GetAllAsync(token);
-            return Ok(categories);
+
+            return Ok(_mapper.Map<IEnumerable<CategoryDto>>(categories));
         }
 
 
@@ -36,7 +41,7 @@ namespace AspNet.Api.Controllers
             if (category == null)
                 return NotFound();
 
-            return Ok(category);
+            return Ok(_mapper.Map<CategoryDto>(category));
         }
 
 
@@ -47,21 +52,7 @@ namespace AspNet.Api.Controllers
 
             if (category == null)
                 return NotFound();
-
-            var result = new CategoryWithProductsModel
-            {
-                Id = category.Id,
-                Name = category.Name,
-
-                Products = category.Products.Select(p => new ProductModel
-                {
-                    Id = p.Id,
-                    Name = p.Name,
-                    Price = p.Price
-                }).ToList()
-            };
-
-            return Ok(result);
+                return Ok(_mapper.Map<CategoryWithProductsDto>(category));
         }
 
 
@@ -72,7 +63,7 @@ namespace AspNet.Api.Controllers
 
             if (category == null)
                 return NotFound();
-            return Ok($"Category updated\n {category}");
+                return Ok($"Category updated\n {_mapper.Map<CategoryDto>(category)}");
         }
 
         [HttpDelete("{id}")]

@@ -3,7 +3,7 @@ using AspNet.Data.Repositories.UnitOfWork;
 using AspNet.Domain.Entities;
 using AspNet.Domain.Models.ProductDetailsModels;
 
-namespace AspNet.Api.Services.Products
+namespace AspNet.BLL.Services.Products
 {
     public class ProductDetailsService(IProductDetailsRepository repository, IUnitOfWork uow) : IProductDetailsService
     {

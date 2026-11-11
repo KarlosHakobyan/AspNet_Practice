@@ -1,6 +1,5 @@
-
-using AspNet.Api.Mapping;
-using AspNet.Api.Services.Products;
+using AspNet.BLL.Mapping;
+using AspNet.BLL.Services.Products;
 using AspNet.Data;
 using AspNet.Data.Repositories;
 using AspNet.Data.Repositories.Interfaces;

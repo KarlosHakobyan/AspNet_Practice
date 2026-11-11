@@ -1,6 +1,6 @@
-﻿using AspNet.Api.Models.DTOs.Categories;
+﻿using AspNet.BLL.DTOs.Categories;
 
-namespace AspNet.Api.Models.DTOs.Products
+namespace AspNet.BLL.DTOs.Products
 {
     public class ProductDto
     {

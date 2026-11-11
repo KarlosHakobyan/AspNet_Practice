@@ -1,4 +1,4 @@
-﻿namespace AspNet.Api.Models.DTOs.Tags
+﻿namespace AspNet.BLL.DTOs.Tags
 {
     public class TagDto
     {

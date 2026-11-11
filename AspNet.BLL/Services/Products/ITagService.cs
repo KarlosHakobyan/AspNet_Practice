@@ -1,7 +1,7 @@
 ﻿using AspNet.Domain.Entities;
 using AspNet.Domain.Models.TagModels;
 
-namespace AspNet.Api.Services.Products
+namespace AspNet.BLL.Services.Products
 {
     public interface ITagService
     {

@@ -1,4 +1,4 @@
-﻿namespace AspNet.Api.Models.DTOs.ProductDetails
+﻿namespace AspNet.BLL.DTOs.ProductDetails
 {
     public class ProductDetailsDto
     {

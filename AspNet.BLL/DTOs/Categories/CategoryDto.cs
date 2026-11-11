@@ -1,4 +1,4 @@
-﻿namespace AspNet.Api.Models.DTOs.Categories
+﻿namespace AspNet.BLL.DTOs.Categories
 {
     public class CategoryDto
     {
