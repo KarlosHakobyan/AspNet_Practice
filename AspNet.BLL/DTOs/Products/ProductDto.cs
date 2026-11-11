@@ -11,5 +11,7 @@ namespace AspNet.BLL.DTOs.Products
         public decimal Price { get; set; }
 
         public CategoryDto? Category { get; set; }
+
+        public int CategoryId { get; set; }
     }
 }

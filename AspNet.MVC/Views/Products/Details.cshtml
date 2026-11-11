@@ -1,0 +1,58 @@
+﻿@model AspNet.MVC.Models.Products.ProductModel
+
+@{
+    ViewData["Title"] = "Product Details";
+}
+
+<div class="dashboard-heading">
+    <div>
+        <h2>Product Details</h2>
+        <p>View product information.</p>
+    </div>
+
+    <a asp-action="Index" class="btn btn-outline-secondary">
+        ← Back to Products
+    </a>
+</div>
+
+<div class="form-panel">
+
+    <div class="form-panel-header">
+        <h5>@Model.Name</h5>
+        <p>Product ID: #@Model.Id</p>
+    </div>
+
+    <div class="product-detail-row">
+        <span>Product ID</span>
+        <strong>@Model.Id</strong>
+    </div>
+
+    <div class="product-detail-row">
+        <span>Product Name</span>
+        <strong>@Model.Name</strong>
+    </div>
+
+    <div class="product-detail-row">
+        <span>Price</span>
+        <strong>@Model.Price.ToString("N2")</strong>
+    </div>
+
+    <div class="product-detail-row">
+        <span>Category</span>
+        <strong>@(Model.Category?.Name ?? "Uncategorized")</strong>
+    </div>
+
+    <div class="form-actions mt-4">
+        <a asp-action="Edit"
+           asp-route-id="@Model.Id"
+           class="btn-primary-custom">
+            Edit Product
+        </a>
+
+        <a asp-action="Index"
+           class="btn btn-outline-secondary">
+            Back
+        </a>
+    </div>
+
+</div>

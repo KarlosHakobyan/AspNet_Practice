@@ -1,0 +1,147 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="dashboard-heading">
+    <div>
+        <h2>Welcome back, Administrator 👋</h2>
+        <p>Here's what's happening with your application today.</p>
+    </div>
+
+    <button class="dashboard-date">
+        <span>◷</span> Overview
+    </button>
+</div>
+
+<div class="row g-4 mb-4">
+
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-top">
+                <span>Total Products</span>
+                <div class="stat-icon icon-blue">▤</div>
+            </div>
+            <h3>128</h3>
+            <p>Products in inventory</p>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-top">
+                <span>Categories</span>
+                <div class="stat-icon icon-purple">▧</div>
+            </div>
+            <h3>12</h3>
+            <p>Organized categories</p>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-top">
+                <span>Total Tags</span>
+                <div class="stat-icon icon-orange">◇</div>
+            </div>
+            <h3>34</h3>
+            <p>Available tags</p>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-3">
+        <div class="stat-card">
+            <div class="stat-top">
+                <span>System Status</span>
+                <div class="stat-icon icon-green">✓</div>
+            </div>
+            <h3 class="healthy">Healthy</h3>
+            <p>Application running</p>
+        </div>
+    </div>
+
+</div>
+
+<div class="row g-4">
+
+    <div class="col-12 col-xl-8">
+        <div class="dashboard-panel">
+            <div class="panel-header">
+                <div>
+                    <h5>Recent Activity</h5>
+                    <p>Overview of your application</p>
+                </div>
+                <span class="panel-menu">•••</span>
+            </div>
+
+            <div class="table-responsive">
+                <table class="dashboard-table">
+                    <thead>
+                        <tr>
+                            <th>ACTIVITY</th>
+                            <th>MODULE</th>
+                            <th>STATUS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Product management</td>
+                            <td>Products</td>
+                            <td><span class="status-badge">Ready</span></td>
+                        </tr>
+                        <tr>
+                            <td>Category management</td>
+                            <td>Categories</td>
+                            <td><span class="status-badge">Ready</span></td>
+                        </tr>
+                        <tr>
+                            <td>Tag management</td>
+                            <td>Tags</td>
+                            <td><span class="status-badge">Ready</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-xl-4">
+        <div class="dashboard-panel">
+            <div class="panel-header">
+                <div>
+                    <h5>Quick Actions</h5>
+                    <p>Manage your resources</p>
+                </div>
+            </div>
+
+            <div class="quick-actions">
+                <a href="#" class="quick-action">
+                    <span class="action-icon icon-blue">+</span>
+                    <span>
+                        <strong>Add Product</strong>
+                        <small>Create a new product</small>
+                    </span>
+                    <span class="action-arrow">→</span>
+                </a>
+
+                <a href="#" class="quick-action">
+                    <span class="action-icon icon-purple">+</span>
+                    <span>
+                        <strong>Add Category</strong>
+                        <small>Create a new category</small>
+                    </span>
+                    <span class="action-arrow">→</span>
+                </a>
+
+                <a href="#" class="quick-action">
+                    <span class="action-icon icon-orange">+</span>
+                    <span>
+                        <strong>Add Tag</strong>
+                        <small>Create a new tag</small>
+                    </span>
+                    <span class="action-arrow">→</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+</div>
