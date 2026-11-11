@@ -1,12 +1,15 @@
 using AspNet.BLL.Mapping;
 using AspNet.BLL.Services.Products;
+using AspNet.BLL.Validators.Products;
 using AspNet.Data;
 using AspNet.Data.Repositories;
 using AspNet.Data.Repositories.Interfaces;
 using AspNet.Data.Repositories.UnitOfWork;
 using AspNet.Data.Seed;
-
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
+
 
 namespace AspNet.Api
 {
@@ -47,6 +50,10 @@ namespace AspNet.Api
             {
                 cfg.AddMaps(typeof(ProductProfile).Assembly);
             });
+
+            //Validations
+            object value = builder.Services.AddFluentValidationAutoValidation();
+            builder.Services.AddValidatorsFromAssemblyContaining<ProductAddModelValidator>();
 
             // Swagger
             builder.Services.AddEndpointsApiExplorer();
