@@ -1,58 +1,78 @@
-﻿@model AspNet.MVC.Models.Products.ProductModel
+﻿@model AspNet.MVC.Models.Products.ProductDetailsPageModel
 
 @{
     ViewData["Title"] = "Product Details";
 }
 
-<div class="dashboard-heading">
+<div class="page-header">
     <div>
-        <h2>Product Details</h2>
-        <p>View product information.</p>
+        <h1>Product Details</h1>
+        <p class="page-subtitle">View product information</p>
     </div>
-
     <a asp-action="Index" class="btn btn-outline-secondary">
-        ← Back to Products
+        Back to Products
     </a>
 </div>
 
 <div class="form-panel">
-
     <div class="form-panel-header">
-        <h5>@Model.Name</h5>
-        <p>Product ID: #@Model.Id</p>
+        <h3>General Information</h3>
     </div>
 
     <div class="product-detail-row">
-        <span>Product ID</span>
-        <strong>@Model.Id</strong>
+        <strong>ID</strong>
+        <span>@Model.Product.Id</span>
     </div>
 
     <div class="product-detail-row">
-        <span>Product Name</span>
-        <strong>@Model.Name</strong>
+        <strong>Name</strong>
+        <span>@Model.Product.Name</span>
     </div>
 
     <div class="product-detail-row">
-        <span>Price</span>
-        <strong>@Model.Price.ToString("N2")</strong>
+        <strong>Price</strong>
+        <span>@Model.Product.Price.ToString("C")</span>
     </div>
 
     <div class="product-detail-row">
-        <span>Category</span>
-        <strong>@(Model.Category?.Name ?? "Uncategorized")</strong>
+        <strong>Category</strong>
+        <span>@(Model.Product.Category?.Name ?? "Not assigned")</span>
     </div>
+
+    <div class="form-panel-header mt-4">
+        <h3>Additional Details</h3>
+    </div>
+
+    @if (Model.Details != null)
+    {
+        <div class="product-detail-row">
+            <strong>Manufacturer</strong>
+            <span>@Model.Details.Manufacturer</span>
+        </div>
+
+        <div class="product-detail-row">
+            <strong>Description</strong>
+            <span>@(Model.Details.Description ?? "No description")</span>
+        </div>
+
+        <div class="product-detail-row">
+            <strong>Warranty</strong>
+            <span>@Model.Details.WarrantyMonths months</span>
+        </div>
+    }
+    else
+    {
+        <p class="text-muted">
+            No additional details have been added for this product yet.
+        </p>
+    }
 
     <div class="form-actions mt-4">
         <a asp-action="Edit"
-           asp-route-id="@Model.Id"
-           class="btn-primary-custom">
+           asp-route-id="@Model.Product.Id"
+           class="btn btn-primary">
             Edit Product
         </a>
-
-        <a asp-action="Index"
-           class="btn btn-outline-secondary">
-            Back
-        </a>
     </div>
-
 </div>
+    

@@ -17,6 +17,11 @@ namespace AspNet.BLL.Services.Products
 
         public async Task<ProductDetails?> CreateAsync(ProductDetailsAddModel model, CancellationToken token = default)
         {
+            var existingDetails = await _repository.GetByIdAsync(model.ProductId, token);
+
+            if (existingDetails != null)
+                return null;
+
             var details = new ProductDetails
             {
                 ProductId = model.ProductId,

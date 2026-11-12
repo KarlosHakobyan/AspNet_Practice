@@ -1,92 +1,176 @@
-﻿@model AspNet.MVC.Models.Products.ProductUpdateModel
+﻿@model AspNet.MVC.Models.Products.ProductEditPageModel
 
 @{
     ViewData["Title"] = "Edit Product";
 }
 
-<div class="dashboard-heading">
+<div class="page-header">
     <div>
-        <h2>Edit Product</h2>
-        <p>Update product information.</p>
+        <h1>Edit Product</h1>
+        <p class="page-subtitle">Update product information</p>
     </div>
 
     <a asp-action="Index" class="btn btn-outline-secondary">
-        ← Back to Products
+        Back to Products
     </a>
 </div>
 
 <div class="form-panel">
-
-    <div class="form-panel-header">
-        <h5>Product Information</h5>
-        <p>Product ID: #@ViewBag.ProductId</p>
-    </div>
-
     <form asp-action="Edit"
           asp-route-id="@ViewBag.ProductId"
           method="post">
 
         <div asp-validation-summary="ModelOnly"
-             class="alert alert-danger">
+             class="text-danger mb-3"></div>
+
+        <h5>General Information</h5>
+
+        <div class="mb-3">
+            <label asp-for="Product.Name" class="form-label"></label>
+            <input asp-for="Product.Name" class="form-control" />
+            <span asp-validation-for="Product.Name"
+                  class="text-danger"></span>
         </div>
 
-        <div class="mb-4">
-            <label asp-for="Name" class="form-label">
-                Product Name
-            </label>
-
-            <input asp-for="Name"
-                   class="form-control" />
-
-            <span asp-validation-for="Name"
-                  class="text-danger small">
-            </span>
-        </div>
-
-        <div class="mb-4">
-            <label asp-for="Price" class="form-label">
-                Price
-            </label>
-
-            <input asp-for="Price"
+        <div class="mb-3">
+            <label asp-for="Product.Price" class="form-label"></label>
+            <input asp-for="Product.Price"
                    type="number"
                    step="0.01"
                    class="form-control" />
-
-            <span asp-validation-for="Price"
-                  class="text-danger small">
-            </span>
+            <span asp-validation-for="Product.Price"
+                  class="text-danger"></span>
         </div>
 
-        <div class="mb-4">
-            <label asp-for="CategoryId" class="form-label">
+        <div class="mb-3">
+            <label asp-for="Product.CategoryId" class="form-label">
                 Category ID
             </label>
-
-            <input asp-for="CategoryId"
+            <input asp-for="Product.CategoryId"
                    type="number"
                    class="form-control" />
-
-            <span asp-validation-for="CategoryId"
-                  class="text-danger small">
-            </span>
+            <span asp-validation-for="Product.CategoryId"
+                  class="text-danger"></span>
         </div>
 
-        <div class="form-actions">
-            <a asp-action="Index"
+        <hr class="my-4" />
+
+        <h5>Additional Details</h5>
+
+        <div class="form-check mb-3">
+            <input asp-for="HasDetails"
+                   class="form-check-input"
+                   id="hasDetails" />
+
+            <label asp-for="HasDetails"
+                   class="form-check-label"
+                   for="hasDetails">
+                Enable additional product details
+            </label>
+        </div>
+
+        <div id="detailsSection"
+             style="display: @(Model.HasDetails ? "block" : "none")">
+
+            <div class="mb-3">
+                <label asp-for="ManufacturerOption"
+                       class="form-label">
+                    Manufacturer
+                </label>
+
+                <select asp-for="ManufacturerOption"
+                        class="form-select"
+                        id="manufacturerSelect">
+
+                    <option value="">-- Select manufacturer --</option>
+                    <option value="Apple">Apple</option>
+                    <option value="Samsung">Samsung</option>
+                    <option value="Dell">Dell</option>
+                    <option value="HP">HP</option>
+                    <option value="Lenovo">Lenovo</option>
+                    <option value="Logitech">Logitech</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+
+            <div class="mb-3"
+                 id="customManufacturerSection"
+                 style="display: @(Model.ManufacturerOption == "Other" ? "block" : "none")">
+
+                <label asp-for="CustomManufacturer"
+                       class="form-label">
+                    Enter manufacturer manually
+                </label>
+
+                <input asp-for="CustomManufacturer"
+                       class="form-control"
+                       placeholder="Enter manufacturer name" />
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Details.Description"
+                       class="form-label"></label>
+
+                <textarea asp-for="Details.Description"
+                          class="form-control"
+                          rows="4"></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Details.WarrantyMonths"
+                       class="form-label"></label>
+
+                <input asp-for="Details.WarrantyMonths"
+                       type="number"
+                       class="form-control" />
+
+                <span asp-validation-for="Details.WarrantyMonths"
+                      class="text-danger"></span>
+            </div>
+        </div>
+
+        <div class="form-actions mt-4">
+            <button type="submit" class="btn btn-primary">
+                Save Changes
+            </button>
+
+            <a asp-action="Details"
+               asp-route-id="@ViewBag.ProductId"
                class="btn btn-outline-secondary">
                 Cancel
             </a>
-
-            <button type="submit" class="btn-primary-custom">
-                Save Changes
-            </button>
         </div>
-
     </form>
-
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        const hasDetails = document.getElementById("hasDetails");
+        const detailsSection = document.getElementById("detailsSection");
+
+        const manufacturerSelect =
+            document.getElementById("manufacturerSelect");
+
+        const customManufacturerSection =
+            document.getElementById("customManufacturerSection");
+
+        function toggleDetails() {
+            detailsSection.style.display =
+                hasDetails.checked ? "block" : "none";
+        }
+
+        function toggleCustomManufacturer() {
+            customManufacturerSection.style.display =
+                manufacturerSelect.value === "Other" ? "block" : "none";
+        }
+
+        hasDetails.addEventListener("change", toggleDetails);
+
+        manufacturerSelect.addEventListener(
+            "change",
+            toggleCustomManufacturer
+        );
+    </script>
 }
