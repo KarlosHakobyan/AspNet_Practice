@@ -634,3 +634,16 @@ body {
             text-align: left;
         }
 }
+
+.tag-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 12px;
+    border-radius: 20px;
+    background: #eef2ff;
+    color: #5478f5;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+

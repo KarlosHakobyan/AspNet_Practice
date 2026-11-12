@@ -23,6 +23,19 @@ namespace AspNet.MVC
                     client.BaseAddress = new Uri(apiBaseUrl);
                 });
 
+            builder.Services.AddHttpClient<ICategoryApiService, CategoryApiService>(
+                 client =>
+                 {
+                     client.BaseAddress = new Uri(apiBaseUrl);
+                 });
+
+            builder.Services.AddHttpClient<ITagApiService, TagApiService>(
+                client =>
+                {
+                    client.BaseAddress = new Uri(apiBaseUrl);
+                });
+
+
             var app = builder.Build();
 
             // Middleware

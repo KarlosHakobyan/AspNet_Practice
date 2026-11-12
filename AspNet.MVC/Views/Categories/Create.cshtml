@@ -1,0 +1,51 @@
+﻿@model AspNet.MVC.Models.Categories.CategoryCreateModel
+
+@{
+    ViewData["Title"] = "Create Category";
+}
+
+<div class="dashboard-heading">
+    <div>
+        <h2>Create Category</h2>
+        <p>Add a new product category.</p>
+    </div>
+
+    <a asp-action="Index" class="btn btn-outline-secondary">
+        ← Back to Categories
+    </a>
+</div>
+
+<div class="form-panel">
+    <div class="form-panel-header">
+        <h5>Category Information</h5>
+        <p>Enter the category name.</p>
+    </div>
+
+    <form asp-action="Create" method="post">
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+        <div class="mb-4">
+            <label asp-for="Name" class="form-label">Category Name</label>
+
+            <input asp-for="Name"
+                   class="form-control"
+                   placeholder="Enter category name" />
+
+            <span asp-validation-for="Name" class="text-danger small"></span>
+        </div>
+
+        <div class="form-actions">
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                Cancel
+            </a>
+
+            <button type="submit" class="btn-primary-custom">
+                Create Category
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

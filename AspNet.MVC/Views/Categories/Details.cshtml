@@ -1,0 +1,45 @@
+﻿@model AspNet.MVC.Models.Categories.CategoryModel
+
+@{
+    ViewData["Title"] = "Category Details";
+}
+
+<div class="dashboard-heading">
+    <div>
+        <h2>Category Details</h2>
+        <p>View category information.</p>
+    </div>
+
+    <a asp-action="Index" class="btn btn-outline-secondary">
+        ← Back to Categories
+    </a>
+</div>
+
+<div class="form-panel">
+    <div class="form-panel-header">
+        <h5>@Model.Name</h5>
+        <p>Category ID: #@Model.Id</p>
+    </div>
+
+    <div class="product-detail-row">
+        <span>Category ID</span>
+        <strong>@Model.Id</strong>
+    </div>
+
+    <div class="product-detail-row">
+        <span>Category Name</span>
+        <strong>@Model.Name</strong>
+    </div>
+
+    <div class="form-actions">
+        <a asp-action="Edit"
+           asp-route-id="@Model.Id"
+           class="btn-primary-custom">
+            Edit Category
+        </a>
+
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            Back
+        </a>
+    </div>
+</div>

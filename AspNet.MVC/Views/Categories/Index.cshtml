@@ -1,0 +1,101 @@
+﻿@model IEnumerable<AspNet.MVC.Models.Categories.CategoryModel>
+
+@{
+    ViewData["Title"] = "Categories";
+}
+
+<div class="dashboard-heading">
+    <div>
+        <h2>Categories</h2>
+        <p>Organize your products into categories.</p>
+    </div>
+
+    <a asp-action="Create" class="btn-primary-custom">
+        + Add Category
+    </a>
+</div>
+
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show">
+        @TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+@if (TempData["Error"] != null)
+{
+    <div class="alert alert-danger alert-dismissible fade show">
+        @TempData["Error"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+    </div>
+}
+
+<div class="dashboard-panel">
+    <div class="panel-header">
+        <div>
+            <h5>All Categories</h5>
+            <p>Manage your product categories</p>
+        </div>
+
+        <span class="text-muted">Total: @Model.Count()</span>
+    </div>
+
+    <div class="table-responsive">
+        <table class="dashboard-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>CATEGORY NAME</th>
+                    <th>ACTIONS</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr>
+                        <td colspan="3" class="text-center py-5">
+                            No categories found.
+                        </td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var category in Model)
+                    {
+                        <tr>
+                            <td>#@category.Id</td>
+                            <td><strong>@category.Name</strong></td>
+                            <td>
+                                <div class="d-flex gap-2">
+                                    <a asp-action="Details"
+                                       asp-route-id="@category.Id"
+                                       class="btn btn-sm btn-outline-secondary">
+                                        View
+                                    </a>
+
+                                    <a asp-action="Edit"
+                                       asp-route-id="@category.Id"
+                                       class="btn btn-sm btn-outline-primary">
+                                        Edit
+                                    </a>
+
+                                    <form asp-action="Delete"
+                                          asp-route-id="@category.Id"
+                                          method="post"
+                                          onsubmit="return confirm('Delete this category?');">
+                                        <button type="submit"
+                                                class="btn btn-sm btn-outline-danger">
+                                            Delete
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

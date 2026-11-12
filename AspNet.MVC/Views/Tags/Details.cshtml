@@ -1,0 +1,45 @@
+﻿@model AspNet.MVC.Models.Tags.TagModel
+
+@{
+    ViewData["Title"] = "Tag Details";
+}
+
+<div class="dashboard-heading">
+    <div>
+        <h2>Tag Details</h2>
+        <p>View tag information.</p>
+    </div>
+
+    <a asp-action="Index" class="btn btn-outline-secondary">
+        ← Back to Tags
+    </a>
+</div>
+
+<div class="form-panel">
+    <div class="form-panel-header">
+        <h5>@Model.Name</h5>
+        <p>Tag ID: #@Model.Id</p>
+    </div>
+
+    <div class="product-detail-row">
+        <span>Tag ID</span>
+        <strong>@Model.Id</strong>
+    </div>
+
+    <div class="product-detail-row">
+        <span>Tag Name</span>
+        <strong>@Model.Name</strong>
+    </div>
+
+    <div class="form-actions">
+        <a asp-action="Edit"
+           asp-route-id="@Model.Id"
+           class="btn-primary-custom">
+            Edit Tag
+        </a>
+
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            Back
+        </a>
+    </div>
+</div>

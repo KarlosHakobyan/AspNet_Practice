@@ -19,44 +19,59 @@
         <!-- Sidebar -->
         <aside class="sidebar">
 
+            <!-- Brand -->
             <div class="sidebar-brand">
                 <span class="brand-icon">A</span>
                 <span>AspNet Admin</span>
             </div>
 
+            <!-- Navigation -->
             <nav class="sidebar-nav">
 
-                <div class="nav-section-title">MAIN MENU</div>
+                <div class="nav-section-title">
+                    MAIN MENU
+                </div>
 
+                <!-- Dashboard -->
                 <a asp-controller="Home"
                    asp-action="Index"
-                   class="nav-item">
+                   class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" ? "active" : "")">
+
                     <span>▦</span>
                     Dashboard
                 </a>
 
+                <!-- Products -->
                 <a asp-controller="Products"
                    asp-action="Index"
-                   class="nav-item">
+                   class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Products" ? "active" : "")">
+
                     <span>▤</span>
                     Products
                 </a>
 
+                <!-- Categories -->
                 <a asp-controller="Categories"
                    asp-action="Index"
-                   class="nav-item">
+                   class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Categories" ? "active" : "")">
+
                     <span>▧</span>
                     Categories
                 </a>
 
+                <!-- Tags -->
                 <a asp-controller="Tags"
                    asp-action="Index"
-                   class="nav-item">
+                   class="nav-item @(ViewContext.RouteData.Values["controller"]?.ToString() == "Tags" ? "active" : "")">
+
                     <span>◇</span>
                     Tags
                 </a>
 
-                <div class="nav-section-title">SYSTEM</div>
+                <!-- System -->
+                <div class="nav-section-title">
+                    SYSTEM
+                </div>
 
                 <a href="#" class="nav-item">
                     <span>⚙</span>
@@ -65,41 +80,64 @@
 
             </nav>
 
+            <!-- Sidebar Footer -->
             <div class="sidebar-footer">
 
-                <div class="user-avatar">K</div>
+                <div class="user-avatar">
+                    K
+                </div>
 
                 <div>
-                    <div class="user-name">Administrator</div>
-                    <div class="user-role">System Admin</div>
+                    <div class="user-name">
+                        Administrator
+                    </div>
+
+                    <div class="user-role">
+                        System Admin
+                    </div>
                 </div>
 
             </div>
 
         </aside>
 
-        <!-- Main Content -->
+        <!-- Main Wrapper -->
         <div class="main-wrapper">
 
-            <!-- Header -->
+            <!-- Topbar -->
             <header class="topbar">
 
                 <div>
-                    <h5 class="page-title">@ViewData["Title"]</h5>
-                    <p class="page-subtitle">Manage your application</p>
+                    <h5 class="page-title">
+                        @ViewData["Title"]
+                    </h5>
+
+                    <p class="page-subtitle">
+                        Manage your application
+                    </p>
                 </div>
 
                 <div class="admin-profile">
+
                     <span class="online-indicator"></span>
-                    <span>Administrator</span>
-                    <div class="user-avatar">K</div>
+
+                    <span>
+                        Administrator
+                    </span>
+
+                    <div class="user-avatar">
+                        K
+                    </div>
+
                 </div>
 
             </header>
 
-            <!-- Page Content -->
+            <!-- Main Content -->
             <main class="main-content">
+
                 @RenderBody()
+
             </main>
 
             <!-- Footer -->
@@ -113,7 +151,9 @@
 
     <!-- Scripts -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)

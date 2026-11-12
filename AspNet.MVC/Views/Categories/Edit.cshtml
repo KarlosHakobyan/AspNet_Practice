@@ -1,0 +1,51 @@
+﻿@model AspNet.MVC.Models.Categories.CategoryUpdateModel
+
+@{
+    ViewData["Title"] = "Edit Category";
+}
+
+<div class="dashboard-heading">
+    <div>
+        <h2>Edit Category</h2>
+        <p>Update category information.</p>
+    </div>
+
+    <a asp-action="Index" class="btn btn-outline-secondary">
+        ← Back to Categories
+    </a>
+</div>
+
+<div class="form-panel">
+    <div class="form-panel-header">
+        <h5>Category Information</h5>
+    </div>
+
+    <form asp-action="Edit"
+          asp-route-id="@ViewContext.RouteData.Values["id"]"
+          method="post">
+
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+        <div class="mb-4">
+            <label asp-for="Name" class="form-label">Category Name</label>
+
+            <input asp-for="Name" class="form-control" />
+
+            <span asp-validation-for="Name" class="text-danger small"></span>
+        </div>
+
+        <div class="form-actions">
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                Cancel
+            </a>
+
+            <button type="submit" class="btn-primary-custom">
+                Save Changes
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

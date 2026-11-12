@@ -11,7 +11,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNet.Data", "AspNet.Data\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNet.Domain", "AspNet.Domain\AspNet.Domain.csproj", "{2521B5F8-3C6F-4170-8AD9-920183016C13}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AspNet.MVC", "AspNet.MVC\AspNet.MVC.csproj", "{583C9849-9FEC-49DA-B724-957E7922E86A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AspNet.MVC", "AspNet.MVC\AspNet.MVC.csproj", "{583C9849-9FEC-49DA-B724-957E7922E86A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

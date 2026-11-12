@@ -119,9 +119,9 @@ namespace AspNet.Data.Seed
 
             var tags = await context.Tags.ToListAsync();
 
-            var tagMap = tags.ToDictionary(t => t.Name);
+            var tagMap = tags.GroupBy(t => t.Name).ToDictionary(g => g.Key, g => g.First());
 
-            var productMap = products.ToDictionary(p => p.Name);
+            var productMap = products.GroupBy(p => p.Name).ToDictionary(g => g.Key, g => g.First());
 
             var productTagData = new[]
             {

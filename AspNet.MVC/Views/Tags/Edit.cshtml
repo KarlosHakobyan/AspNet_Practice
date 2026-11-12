@@ -1,0 +1,51 @@
+﻿@model AspNet.MVC.Models.Tags.TagUpdateModel
+
+@{
+    ViewData["Title"] = "Edit Tag";
+}
+
+<div class="dashboard-heading">
+    <div>
+        <h2>Edit Tag</h2>
+        <p>Update tag information.</p>
+    </div>
+
+    <a asp-action="Index" class="btn btn-outline-secondary">
+        ← Back to Tags
+    </a>
+</div>
+
+<div class="form-panel">
+    <div class="form-panel-header">
+        <h5>Tag Information</h5>
+    </div>
+
+    <form asp-action="Edit"
+          asp-route-id="@ViewContext.RouteData.Values["id"]"
+          method="post">
+
+        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+        <div class="mb-4">
+            <label asp-for="Name" class="form-label">Tag Name</label>
+
+            <input asp-for="Name" class="form-control" />
+
+            <span asp-validation-for="Name" class="text-danger small"></span>
+        </div>
+
+        <div class="form-actions">
+            <a asp-action="Index" class="btn btn-outline-secondary">
+                Cancel
+            </a>
+
+            <button type="submit" class="btn-primary-custom">
+                Save Changes
+            </button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
