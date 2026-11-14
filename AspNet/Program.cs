@@ -10,6 +10,7 @@ using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using AspNet.Api.Exceptions;
+using Microsoft.AspNetCore.Mvc;
 
 
 namespace AspNet.Api
@@ -21,7 +22,23 @@ namespace AspNet.Api
             var builder = WebApplication.CreateBuilder(args);
 
             // Controllers
-            builder.Services.AddControllers();
+            builder.Services.AddControllers().ConfigureApiBehaviorOptions(options =>
+            {
+                options.InvalidModelStateResponseFactory = context =>
+                {
+                    var problemDetails = new ValidationProblemDetails(context.ModelState)
+                    {
+                        Status = StatusCodes.Status400BadRequest,
+                        Title = "Validation Failed",
+                        Detail = "One or more validation errors occurred.",
+                        Instance = context.HttpContext.Request.Path
+                    };
+
+                        problemDetails.Extensions["traceId"] = context.HttpContext.TraceIdentifier;
+
+            return new BadRequestObjectResult(problemDetails);
+            };
+        });
 
             // Database
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
