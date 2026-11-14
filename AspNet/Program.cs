@@ -9,6 +9,7 @@ using AspNet.Data.Seed;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
+using AspNet.Api.Exceptions;
 
 
 namespace AspNet.Api
@@ -52,8 +53,12 @@ namespace AspNet.Api
             });
 
             //Validations
-            object value = builder.Services.AddFluentValidationAutoValidation();
+            builder.Services.AddFluentValidationAutoValidation();
             builder.Services.AddValidatorsFromAssemblyContaining<ProductAddModelValidator>();
+
+            // Global Exception Handling
+            builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+            builder.Services.AddProblemDetails();
 
             // Swagger
             builder.Services.AddEndpointsApiExplorer();
@@ -61,7 +66,11 @@ namespace AspNet.Api
 
             var app = builder.Build();
 
+
+
             // HTTP Pipeline
+            app.UseExceptionHandler();
+
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
@@ -71,6 +80,7 @@ namespace AspNet.Api
             app.UseAuthorization();
 
             app.MapControllers();
+
 
             // Database Seeding
             try
