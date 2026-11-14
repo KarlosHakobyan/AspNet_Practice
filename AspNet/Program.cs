@@ -80,7 +80,8 @@ public class Program
         builder.Services.AddScoped<IProductService, ProductService>();
         builder.Services.AddScoped<ICategoryService, CategoryService>();
         builder.Services.AddScoped<ITagService, TagService>();
-        builder.Services.AddScoped<IProductDetailsService, ProductDetailsService>();
+        builder.Services.AddScoped<IProductDetailsService, ProductDetailsService>();     
+
 
         // Identity
         builder.Services
@@ -135,6 +136,10 @@ public class Program
         // Authentication Services
         builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
         builder.Services.AddScoped<IAuthService, AuthService>();
+
+        //Roles
+        builder.Services.AddScoped<IRoleService, RoleService>();
+
 
         // JWT Authentication
         builder.Services
