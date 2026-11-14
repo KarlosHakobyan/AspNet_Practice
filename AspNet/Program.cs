@@ -11,6 +11,7 @@ using FluentValidation.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using AspNet.Api.Exceptions;
 using Microsoft.AspNetCore.Mvc;
+using AspNet.Api.Middlewares;
 
 
 namespace AspNet.Api
@@ -77,6 +78,9 @@ namespace AspNet.Api
             builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
             builder.Services.AddProblemDetails();
 
+            //Custom Middlewares
+            builder.Services.AddTransient<RequestLoggingMiddleware>();
+
             // Swagger
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -84,6 +88,7 @@ namespace AspNet.Api
             var app = builder.Build();
 
 
+           app.UseMiddleware<RequestLoggingMiddleware>();
 
             // HTTP Pipeline
             app.UseExceptionHandler();
