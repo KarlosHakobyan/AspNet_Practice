@@ -1,0 +1,60 @@
+﻿@{
+    ViewData["Title"] = "Customer Dashboard";
+}
+
+<div class="dashboard-heading">
+    <div>
+        <h2>Welcome back, Customer 👋</h2>
+        <p>Explore our products and categories.</p>
+    </div>
+
+    <button class="dashboard-date">
+        <span>◷</span> Overview
+    </button>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-12 col-sm-6">
+        <div class="stat-card">
+            <div class="stat-top">
+                <span>Product Catalog</span>
+                <div class="stat-icon icon-blue">▤</div>
+            </div>
+            <h3>Products</h3>
+            <p>Explore available products</p>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6">
+        <div class="stat-card">
+            <div class="stat-top">
+                <span>Categories</span>
+                <div class="stat-icon icon-purple">▧</div>
+            </div>
+            <h3>Categories</h3>
+            <p>Browse product categories</p>
+        </div>
+    </div>
+</div>
+
+<div class="dashboard-panel">
+    <div class="panel-header">
+        <div>
+            <h5>Explore</h5>
+            <p>Discover available products</p>
+        </div>
+    </div>
+
+    <div class="quick-actions">
+        <a asp-controller="Products"
+           asp-action="Index"
+           class="quick-action">
+            <span class="action-icon icon-blue">▤</span>
+            <span>
+                <strong>Browse Products</strong>
+                <small>Explore the product catalog</small>
+            </span>
+            <span class="action-arrow">→</span>
+        </a>
+    </div>
+</div>

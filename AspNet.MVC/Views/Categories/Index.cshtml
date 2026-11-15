@@ -2,24 +2,40 @@
 
 @{
     ViewData["Title"] = "Categories";
+
+    var categories = Model.ToList();
+
+    var isAdmin = User.IsInRole("Admin");
 }
 
 <div class="dashboard-heading">
     <div>
         <h2>Categories</h2>
-        <p>Organize your products into categories.</p>
+        <p>
+            @(isAdmin
+                ? "Organize and manage your product categories."
+                : "Browse product categories.")
+        </p>
     </div>
 
-    <a asp-action="Create" class="btn-primary-custom">
-        + Add Category
-    </a>
+    @if (isAdmin)
+    {
+        <a asp-action="Create" class="btn-primary-custom">
+            + Add Category
+        </a>
+    }
 </div>
 
 @if (TempData["Success"] != null)
 {
     <div class="alert alert-success alert-dismissible fade show">
         @TempData["Success"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+
+        <button type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Close">
+        </button>
     </div>
 }
 
@@ -27,7 +43,12 @@
 {
     <div class="alert alert-danger alert-dismissible fade show">
         @TempData["Error"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+
+        <button type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Close">
+        </button>
     </div>
 }
 
@@ -35,10 +56,16 @@
     <div class="panel-header">
         <div>
             <h5>All Categories</h5>
-            <p>Manage your product categories</p>
+            <p>
+                @(isAdmin
+                    ? "Manage your product categories"
+                    : "Explore available product categories")
+            </p>
         </div>
 
-        <span class="text-muted">Total: @Model.Count()</span>
+        <span class="text-muted">
+            Total: @categories.Count
+        </span>
     </div>
 
     <div class="table-responsive">
@@ -52,7 +79,7 @@
             </thead>
 
             <tbody>
-                @if (!Model.Any())
+                @if (categories.Count == 0)
                 {
                     <tr>
                         <td colspan="3" class="text-center py-5">
@@ -62,11 +89,15 @@
                 }
                 else
                 {
-                    @foreach (var category in Model)
+                    @foreach (var category in categories)
                     {
                         <tr>
                             <td>#@category.Id</td>
-                            <td><strong>@category.Name</strong></td>
+
+                            <td>
+                                <strong>@category.Name</strong>
+                            </td>
+
                             <td>
                                 <div class="d-flex gap-2">
                                     <a asp-action="Details"
@@ -75,21 +106,27 @@
                                         View
                                     </a>
 
-                                    <a asp-action="Edit"
-                                       asp-route-id="@category.Id"
-                                       class="btn btn-sm btn-outline-primary">
-                                        Edit
-                                    </a>
+                                    @if (isAdmin)
+                                    {
+                                        <a asp-action="Edit"
+                                           asp-route-id="@category.Id"
+                                           class="btn btn-sm btn-outline-primary">
+                                            Edit
+                                        </a>
 
-                                    <form asp-action="Delete"
-                                          asp-route-id="@category.Id"
-                                          method="post"
-                                          onsubmit="return confirm('Delete this category?');">
-                                        <button type="submit"
-                                                class="btn btn-sm btn-outline-danger">
-                                            Delete
-                                        </button>
-                                    </form>
+                                        <form asp-action="Delete"
+                                              asp-route-id="@category.Id"
+                                              method="post"
+                                              onsubmit="return confirm('Delete this category?');">
+
+                                            @Html.AntiForgeryToken()
+
+                                            <button type="submit"
+                                                    class="btn btn-sm btn-outline-danger">
+                                                Delete
+                                            </button>
+                                        </form>
+                                    }
                                 </div>
                             </td>
                         </tr>

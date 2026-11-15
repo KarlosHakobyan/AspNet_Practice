@@ -2,24 +2,39 @@
 
 @{
     ViewData["Title"] = "Tags";
+
+    var tags = Model.ToList();
+    var isAdmin = User.IsInRole("Admin");
 }
 
 <div class="dashboard-heading">
     <div>
         <h2>Tags</h2>
-        <p>Manage tags assigned to your products.</p>
+        <p>
+            @(isAdmin
+                ? "Manage tags assigned to your products."
+                : "Browse tags assigned to products.")
+        </p>
     </div>
 
-    <a asp-action="Create" class="btn-primary-custom">
-        + Add Tag
-    </a>
+    @if (isAdmin)
+    {
+        <a asp-action="Create" class="btn-primary-custom">
+            + Add Tag
+        </a>
+    }
 </div>
 
 @if (TempData["Success"] != null)
 {
     <div class="alert alert-success alert-dismissible fade show">
         @TempData["Success"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+
+        <button type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Close">
+        </button>
     </div>
 }
 
@@ -27,7 +42,12 @@
 {
     <div class="alert alert-danger alert-dismissible fade show">
         @TempData["Error"]
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+
+        <button type="button"
+                class="btn-close"
+                data-bs-dismiss="alert"
+                aria-label="Close">
+        </button>
     </div>
 }
 
@@ -35,10 +55,16 @@
     <div class="panel-header">
         <div>
             <h5>All Tags</h5>
-            <p>Manage your available product tags</p>
+            <p>
+                @(isAdmin
+                    ? "Manage your available product tags"
+                    : "Explore available product tags")
+            </p>
         </div>
 
-        <span class="text-muted">Total: @Model.Count()</span>
+        <span class="text-muted">
+            Total: @tags.Count
+        </span>
     </div>
 
     <div class="table-responsive">
@@ -52,7 +78,7 @@
             </thead>
 
             <tbody>
-                @if (!Model.Any())
+                @if (tags.Count == 0)
                 {
                     <tr>
                         <td colspan="3" class="text-center py-5">
@@ -62,7 +88,7 @@
                 }
                 else
                 {
-                    @foreach (var tag in Model)
+                    @foreach (var tag in tags)
                     {
                         <tr>
                             <td>#@tag.Id</td>
@@ -79,21 +105,27 @@
                                         View
                                     </a>
 
-                                    <a asp-action="Edit"
-                                       asp-route-id="@tag.Id"
-                                       class="btn btn-sm btn-outline-primary">
-                                        Edit
-                                    </a>
+                                    @if (isAdmin)
+                                    {
+                                        <a asp-action="Edit"
+                                           asp-route-id="@tag.Id"
+                                           class="btn btn-sm btn-outline-primary">
+                                            Edit
+                                        </a>
 
-                                    <form asp-action="Delete"
-                                          asp-route-id="@tag.Id"
-                                          method="post"
-                                          onsubmit="return confirm('Delete this tag?');">
-                                        <button type="submit"
-                                                class="btn btn-sm btn-outline-danger">
-                                            Delete
-                                        </button>
-                                    </form>
+                                        <form asp-action="Delete"
+                                              asp-route-id="@tag.Id"
+                                              method="post"
+                                              onsubmit="return confirm('Delete this tag?');">
+
+                                            @Html.AntiForgeryToken()
+
+                                            <button type="submit"
+                                                    class="btn btn-sm btn-outline-danger">
+                                                Delete
+                                            </button>
+                                        </form>
+                                    }
                                 </div>
                             </td>
                         </tr>

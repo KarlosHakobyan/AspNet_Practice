@@ -2,77 +2,103 @@
 
 @{
     ViewData["Title"] = "Product Details";
+
+    var canEdit =
+        User.IsInRole("Admin") || User.IsInRole("Manager");
 }
 
-<div class="page-header">
-    <div>
-        <h1>Product Details</h1>
-        <p class="page-subtitle">View product information</p>
+@if (Model?.Product == null)
+{
+    <div class="alert alert-warning">
+        Product information is unavailable.
     </div>
+
     <a asp-action="Index" class="btn btn-outline-secondary">
         Back to Products
     </a>
-</div>
-
-<div class="form-panel">
-    <div class="form-panel-header">
-        <h3>General Information</h3>
-    </div>
-
-    <div class="product-detail-row">
-        <strong>ID</strong>
-        <span>@Model.Product.Id</span>
-    </div>
-
-    <div class="product-detail-row">
-        <strong>Name</strong>
-        <span>@Model.Product.Name</span>
-    </div>
-
-    <div class="product-detail-row">
-        <strong>Price</strong>
-        <span>@Model.Product.Price.ToString("C")</span>
-    </div>
-
-    <div class="product-detail-row">
-        <strong>Category</strong>
-        <span>@(Model.Product.Category?.Name ?? "Not assigned")</span>
-    </div>
-
-    <div class="form-panel-header mt-4">
-        <h3>Additional Details</h3>
-    </div>
-
-    @if (Model.Details != null)
-    {
-        <div class="product-detail-row">
-            <strong>Manufacturer</strong>
-            <span>@Model.Details.Manufacturer</span>
+}
+else
+{
+    <div class="page-header">
+        <div>
+            <h1>Product Details</h1>
+            <p class="page-subtitle">View product information</p>
         </div>
 
-        <div class="product-detail-row">
-            <strong>Description</strong>
-            <span>@(Model.Details.Description ?? "No description")</span>
-        </div>
-
-        <div class="product-detail-row">
-            <strong>Warranty</strong>
-            <span>@Model.Details.WarrantyMonths months</span>
-        </div>
-    }
-    else
-    {
-        <p class="text-muted">
-            No additional details have been added for this product yet.
-        </p>
-    }
-
-    <div class="form-actions mt-4">
-        <a asp-action="Edit"
-           asp-route-id="@Model.Product.Id"
-           class="btn btn-primary">
-            Edit Product
+        <a asp-action="Index" class="btn btn-outline-secondary">
+            Back to Products
         </a>
     </div>
-</div>
-    
+
+    <div class="form-panel">
+        <div class="form-panel-header">
+            <h3>General Information</h3>
+        </div>
+
+        <div class="product-detail-row">
+            <strong>ID</strong>
+            <span>@Model.Product.Id</span>
+        </div>
+
+        <div class="product-detail-row">
+            <strong>Name</strong>
+            <span>@Model.Product.Name</span>
+        </div>
+
+        <div class="product-detail-row">
+            <strong>Price</strong>
+            <span>@Model.Product.Price.ToString("C")</span>
+        </div>
+
+        <div class="product-detail-row">
+            <strong>Category</strong>
+            <span>@(Model.Product.Category?.Name ?? "Not assigned")</span>
+        </div>
+
+        <div class="form-panel-header mt-4">
+            <h3>Additional Details</h3>
+        </div>
+
+        @if (Model.Details != null)
+        {
+            <div class="product-detail-row">
+                <strong>Manufacturer</strong>
+                <span>@Model.Details.Manufacturer</span>
+            </div>
+
+            <div class="product-detail-row">
+                <strong>Description</strong>
+                <span>@(Model.Details.Description ?? "No description")</span>
+            </div>
+
+            <div class="product-detail-row">
+                <strong>Warranty</strong>
+                <span>@Model.Details.WarrantyMonths months</span>
+            </div>
+        }
+        else
+        {
+            <p class="text-muted">
+                No additional details have been added for this product yet.
+            </p>
+        }
+
+        <div class="form-actions mt-4">
+
+            @if (canEdit)
+            {
+                <a asp-action="Edit"
+                   asp-route-id="@Model.Product.Id"
+                   class="btn btn-primary">
+                    Edit Product
+                </a>
+            }
+
+            <a asp-action="Index"
+               class="btn btn-outline-secondary">
+                Back
+            </a>
+
+        </div>
+    </div>
+}

@@ -1,0 +1,71 @@
+﻿@{
+    ViewData["Title"] = "Manager Dashboard";
+}
+
+<div class="dashboard-heading">
+    <div>
+        <h2>Welcome back, Manager 👋</h2>
+        <p>Manage your products and product information.</p>
+    </div>
+
+    <button class="dashboard-date">
+        <span>◷</span> Overview
+    </button>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-12 col-sm-6 col-xl-4">
+        <div class="stat-card">
+            <div class="stat-top">
+                <span>Products</span>
+                <div class="stat-icon icon-blue">▤</div>
+            </div>
+            <h3>Products</h3>
+            <p>Manage product information</p>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-4">
+        <div class="stat-card">
+            <div class="stat-top">
+                <span>Product Details</span>
+                <div class="stat-icon icon-purple">▧</div>
+            </div>
+            <h3>Details</h3>
+            <p>Manage product details</p>
+        </div>
+    </div>
+
+    <div class="col-12 col-sm-6 col-xl-4">
+        <div class="stat-card">
+            <div class="stat-top">
+                <span>System Status</span>
+                <div class="stat-icon icon-green">✓</div>
+            </div>
+            <h3 class="healthy">Healthy</h3>
+            <p>Application running</p>
+        </div>
+    </div>
+</div>
+
+<div class="dashboard-panel">
+    <div class="panel-header">
+        <div>
+            <h5>Management</h5>
+            <p>Available management sections</p>
+        </div>
+    </div>
+
+    <div class="quick-actions">
+        <a asp-controller="Products"
+           asp-action="Index"
+           class="quick-action">
+            <span class="action-icon icon-blue">▤</span>
+            <span>
+                <strong>Products</strong>
+                <small>Manage products</small>
+            </span>
+            <span class="action-arrow">→</span>
+        </a>
+    </div>
+</div>

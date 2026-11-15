@@ -22,16 +22,25 @@
     </div>
 
     <form asp-action="Create" method="post">
-        <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
+
+        @Html.AntiForgeryToken()
+
+        <div asp-validation-summary="ModelOnly"
+             class="alert alert-danger">
+        </div>
 
         <div class="mb-4">
-            <label asp-for="Name" class="form-label">Tag Name</label>
+            <label asp-for="Name" class="form-label">
+                Tag Name
+            </label>
 
             <input asp-for="Name"
                    class="form-control"
                    placeholder="Enter tag name" />
 
-            <span asp-validation-for="Name" class="text-danger small"></span>
+            <span asp-validation-for="Name"
+                  class="text-danger small">
+            </span>
         </div>
 
         <div class="form-actions">

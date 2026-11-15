@@ -1,32 +1,45 @@
 using AspNet.MVC.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
-namespace AspNet.MVC.Controllers
+namespace AspNet.MVC.Controllers;
+
+[Authorize]
+public class HomeController(
+    ILogger<HomeController> logger) : Controller
 {
-    public class HomeController : Controller
+    public IActionResult Index()
     {
-        private readonly ILogger<HomeController> _logger;
+        if (User.IsInRole("Admin"))
+            return RedirectToAction("Index", "Admin");
 
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
+        if (User.IsInRole("Manager"))
+            return RedirectToAction("Index", "Manager");
 
-        public IActionResult Index()
-        {
-            return View();
-        }
+        if (User.IsInRole("Customer"))
+            return RedirectToAction("Index", "Customer");
 
-        public IActionResult Privacy()
-        {
-            return View();
-        }
+        return Forbid();
+    }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+    [AllowAnonymous]
+    public IActionResult Privacy() => View();
+
+    [AllowAnonymous]
+    [ResponseCache(
+        Duration = 0,
+        Location = ResponseCacheLocation.None,
+        NoStore = true)]
+    public IActionResult Error()
+    {
+        logger.LogError(
+            "An error occurred. TraceIdentifier: {TraceIdentifier}",
+            HttpContext.TraceIdentifier);
+
+        return View(new ErrorViewModel
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+            RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier
+        });
     }
 }

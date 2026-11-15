@@ -20,6 +20,8 @@
           asp-route-id="@ViewBag.ProductId"
           method="post">
 
+        @Html.AntiForgeryToken()
+
         <div asp-validation-summary="ModelOnly"
              class="text-danger mb-3"></div>
 
@@ -27,28 +29,38 @@
 
         <div class="mb-3">
             <label asp-for="Product.Name" class="form-label"></label>
+
             <input asp-for="Product.Name" class="form-control" />
+
             <span asp-validation-for="Product.Name"
                   class="text-danger"></span>
         </div>
 
         <div class="mb-3">
             <label asp-for="Product.Price" class="form-label"></label>
+
             <input asp-for="Product.Price"
                    type="number"
+                   min="0"
                    step="0.01"
                    class="form-control" />
+
             <span asp-validation-for="Product.Price"
                   class="text-danger"></span>
         </div>
 
         <div class="mb-3">
-            <label asp-for="Product.CategoryId" class="form-label">
+            <label asp-for="Product.CategoryId"
+                   class="form-label">
                 Category ID
             </label>
+
             <input asp-for="Product.CategoryId"
                    type="number"
+                   min="1"
+                   step="1"
                    class="form-control" />
+
             <span asp-validation-for="Product.CategoryId"
                   class="text-danger"></span>
         </div>
@@ -91,6 +103,9 @@
                     <option value="Logitech">Logitech</option>
                     <option value="Other">Other</option>
                 </select>
+
+                <span asp-validation-for="ManufacturerOption"
+                      class="text-danger"></span>
             </div>
 
             <div class="mb-3"
@@ -105,6 +120,9 @@
                 <input asp-for="CustomManufacturer"
                        class="form-control"
                        placeholder="Enter manufacturer name" />
+
+                <span asp-validation-for="CustomManufacturer"
+                      class="text-danger"></span>
             </div>
 
             <div class="mb-3">
@@ -114,6 +132,9 @@
                 <textarea asp-for="Details.Description"
                           class="form-control"
                           rows="4"></textarea>
+
+                <span asp-validation-for="Details.Description"
+                      class="text-danger"></span>
             </div>
 
             <div class="mb-3">
@@ -122,14 +143,18 @@
 
                 <input asp-for="Details.WarrantyMonths"
                        type="number"
+                       min="0"
+                       step="1"
                        class="form-control" />
 
                 <span asp-validation-for="Details.WarrantyMonths"
                       class="text-danger"></span>
             </div>
+
         </div>
 
         <div class="form-actions mt-4">
+
             <button type="submit" class="btn btn-primary">
                 Save Changes
             </button>
@@ -139,6 +164,7 @@
                class="btn btn-outline-secondary">
                 Cancel
             </a>
+
         </div>
     </form>
 </div>
@@ -147,30 +173,54 @@
     <partial name="_ValidationScriptsPartial" />
 
     <script>
-        const hasDetails = document.getElementById("hasDetails");
-        const detailsSection = document.getElementById("detailsSection");
+        document.addEventListener("DOMContentLoaded", function () {
+            const hasDetails = document.getElementById("hasDetails");
+            const detailsSection = document.getElementById("detailsSection");
 
-        const manufacturerSelect =
-            document.getElementById("manufacturerSelect");
+            const manufacturerSelect =
+                document.getElementById("manufacturerSelect");
 
-        const customManufacturerSection =
-            document.getElementById("customManufacturerSection");
+            const customManufacturerSection =
+                document.getElementById("customManufacturerSection");
 
-        function toggleDetails() {
-            detailsSection.style.display =
-                hasDetails.checked ? "block" : "none";
-        }
+            const customManufacturer =
+                document.getElementById("CustomManufacturer");
 
-        function toggleCustomManufacturer() {
-            customManufacturerSection.style.display =
-                manufacturerSelect.value === "Other" ? "block" : "none";
-        }
+            const detailsInputs =
+                detailsSection.querySelectorAll("input, select, textarea");
 
-        hasDetails.addEventListener("change", toggleDetails);
+            function toggleDetails() {
+                const enabled = hasDetails.checked;
 
-        manufacturerSelect.addEventListener(
-            "change",
-            toggleCustomManufacturer
-        );
+                detailsSection.style.display = enabled ? "block" : "none";
+
+                detailsInputs.forEach(input => {
+                    input.disabled = !enabled;
+                });
+
+                toggleCustomManufacturer();
+            }
+
+            function toggleCustomManufacturer() {
+                const isOther = manufacturerSelect.value === "Other";
+
+                customManufacturerSection.style.display =
+                    isOther && hasDetails.checked ? "block" : "none";
+
+                if (customManufacturer) {
+                    customManufacturer.disabled =
+                        !hasDetails.checked || !isOther;
+                }
+            }
+
+            hasDetails.addEventListener("change", toggleDetails);
+
+            manufacturerSelect.addEventListener(
+                "change",
+                toggleCustomManufacturer
+            );
+
+            toggleDetails();
+        });
     </script>
 }
