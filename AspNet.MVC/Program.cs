@@ -16,17 +16,29 @@ public class Program
         builder.Services.AddControllersWithViews();
 
         // API Configuration
-        var apiBaseUrl = builder.Configuration["ApiSettings:BaseUrl"]
-            ?? throw new InvalidOperationException(
+        var apiBaseUrl = builder.Configuration["ApiSettings:BaseUrl"];
+
+        if (string.IsNullOrWhiteSpace(apiBaseUrl))
+        {
+            throw new InvalidOperationException(
                 "ApiSettings:BaseUrl is not configured.");
+        }
 
         if (!Uri.TryCreate(
                 apiBaseUrl,
                 UriKind.Absolute,
-                out var apiUri))
+                out var apiUri) ||
+            (apiUri.Scheme != Uri.UriSchemeHttp &&
+             apiUri.Scheme != Uri.UriSchemeHttps))
         {
             throw new InvalidOperationException(
-                "ApiSettings:BaseUrl must be a valid absolute URL.");
+                "ApiSettings:BaseUrl must be a valid absolute HTTP or HTTPS URL.");
+        }
+
+        // Normalize API URL
+        if (!apiBaseUrl.EndsWith('/'))
+        {
+            apiUri = new Uri(apiBaseUrl + "/");
         }
 
         // HttpContext Accessor
@@ -48,7 +60,7 @@ public class Program
             {
                 client.BaseAddress = apiUri;
             })
-        .AddHttpMessageHandler<JwtAuthorizationHandler>();
+            .AddHttpMessageHandler<JwtAuthorizationHandler>();
 
         // Categories API
         builder.Services.AddHttpClient<
@@ -57,7 +69,7 @@ public class Program
             {
                 client.BaseAddress = apiUri;
             })
-        .AddHttpMessageHandler<JwtAuthorizationHandler>();
+            .AddHttpMessageHandler<JwtAuthorizationHandler>();
 
         // Tags API
         builder.Services.AddHttpClient<
@@ -66,7 +78,7 @@ public class Program
             {
                 client.BaseAddress = apiUri;
             })
-        .AddHttpMessageHandler<JwtAuthorizationHandler>();
+            .AddHttpMessageHandler<JwtAuthorizationHandler>();
 
         // Product Details API
         builder.Services.AddHttpClient<
@@ -75,7 +87,7 @@ public class Program
             {
                 client.BaseAddress = apiUri;
             })
-        .AddHttpMessageHandler<JwtAuthorizationHandler>();
+            .AddHttpMessageHandler<JwtAuthorizationHandler>();
 
         // Users API
         builder.Services.AddHttpClient<
@@ -84,7 +96,7 @@ public class Program
             {
                 client.BaseAddress = apiUri;
             })
-        .AddHttpMessageHandler<JwtAuthorizationHandler>();
+            .AddHttpMessageHandler<JwtAuthorizationHandler>();
 
         // Cookie Authentication
         builder.Services
@@ -97,8 +109,11 @@ public class Program
 
                 options.Cookie.Name = "AspNet.MVC.Auth";
                 options.Cookie.HttpOnly = true;
+
                 options.Cookie.SecurePolicy =
-                    CookieSecurePolicy.Always;
+                    builder.Environment.IsDevelopment()
+                        ? CookieSecurePolicy.SameAsRequest
+                        : CookieSecurePolicy.Always;
 
                 options.Cookie.SameSite = SameSiteMode.Lax;
 
