@@ -10,6 +10,7 @@ using AspNet.Api.Settings;
 using AspNet.BLL.Mapping;
 using AspNet.BLL.Services.Auth;
 using AspNet.BLL.Services.Products;
+using AspNet.BLL.Services.Users;
 using AspNet.BLL.Validators.Products;
 
 using AspNet.Data;
@@ -80,7 +81,8 @@ public class Program
         builder.Services.AddScoped<IProductService, ProductService>();
         builder.Services.AddScoped<ICategoryService, CategoryService>();
         builder.Services.AddScoped<ITagService, TagService>();
-        builder.Services.AddScoped<IProductDetailsService, ProductDetailsService>();     
+        builder.Services.AddScoped<IProductDetailsService, ProductDetailsService>();
+        builder.Services.AddScoped<IUserService, UserService>();
 
 
         // Identity

@@ -2,11 +2,11 @@
 
 public class AuthResponseModel
 {
-    public string UserId { get; set; } = default!;
+    public string UserId { get; set; } = string.Empty;
 
-    public string Email { get; set; } = default!;
+    public string Email { get; set; } = string.Empty;
 
-    public string Role { get; set; } = default!;
+    public List<string> Roles { get; set; } = [];
 
-    public string Token { get; set; } = default!;
+    public string Token { get; set; } = string.Empty;
 }

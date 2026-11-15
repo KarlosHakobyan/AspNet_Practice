@@ -31,6 +31,9 @@
         currentController == "Admin" ||
         currentController == "Manager" ||
         currentController == "Customer";
+
+    var isUsersActive = currentController == "Users";
+    var isRolesActive = currentController == "Roles";
 }
 
 <!DOCTYPE html>
@@ -108,24 +111,26 @@
                     </a>
                 }
 
-                <!-- Admin section -->
+                <!-- Administration -->
                 @if (isAdmin)
                 {
                     <div class="nav-section-title">
                         ADMINISTRATION
                     </div>
 
-                    <a href="#"
-                       class="nav-item"
-                       title="User management will be implemented next">
+                    <!-- Users -->
+                    <a asp-controller="Users"
+                       asp-action="Index"
+                       class="nav-item @(isUsersActive ? "active" : "")">
 
                         <span>♙</span>
                         Users
                     </a>
 
-                    <a href="#"
-                       class="nav-item"
-                       title="Role management will be implemented next">
+                    <!-- Roles -->
+                    <a asp-controller="Roles"
+                       asp-action="Index"
+                       class="nav-item @(isRolesActive ? "active" : "")">
 
                         <span>⚿</span>
                         Roles
@@ -133,7 +138,7 @@
                 }
 
                 <!-- System -->
-                @if (isAdmin || isManager || isCustomer)
+                @if (isAuthenticated)
                 {
                     <div class="nav-section-title">
                         SYSTEM

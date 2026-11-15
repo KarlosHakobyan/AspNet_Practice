@@ -21,6 +21,13 @@ public class AccountController(
 
     private readonly ILogger<AccountController> _logger = logger;
 
+    private static readonly HashSet<string> SupportedRoles =
+    [
+        "Admin",
+        "Manager",
+        "Customer"
+    ];
+
     // GET: /Account/Register
     [AllowAnonymous]
     [HttpGet]
@@ -71,7 +78,9 @@ public class AccountController(
         }
         catch (HttpRequestException ex)
         {
-            _logger.LogError(ex, "Unable to connect to the API during registration.");
+            _logger.LogError(
+                ex,
+                "Unable to connect to the API during registration.");
 
             ModelState.AddModelError(
                 string.Empty,
@@ -126,7 +135,9 @@ public class AccountController(
             }
             catch (JsonException ex)
             {
-                _logger.LogError(ex, "Invalid authentication response from API.");
+                _logger.LogError(
+                    ex,
+                    "Invalid authentication response from API.");
 
                 ModelState.AddModelError(
                     string.Empty,
@@ -139,7 +150,8 @@ public class AccountController(
                 string.IsNullOrWhiteSpace(authResponse.UserId) ||
                 string.IsNullOrWhiteSpace(authResponse.Email) ||
                 string.IsNullOrWhiteSpace(authResponse.Token) ||
-                string.IsNullOrWhiteSpace(authResponse.Role))
+                authResponse.Roles is null ||
+                authResponse.Roles.Count == 0)
             {
                 ModelState.AddModelError(
                     string.Empty,
@@ -148,24 +160,25 @@ public class AccountController(
                 return View(model);
             }
 
-            // Validate role before creating authentication cookie.
-            var dashboardController = authResponse.Role switch
-            {
-                "Admin" => "Admin",
-                "Manager" => "Manager",
-                "Customer" => "Customer",
-                _ => null
-            };
+            // Validate all returned roles.
+            var roles = authResponse.Roles
+                .Where(role => !string.IsNullOrWhiteSpace(role))
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList();
 
-            if (dashboardController is null)
+            var unsupportedRoles = roles
+                .Where(role => !SupportedRoles.Contains(role))
+                .ToList();
+
+            if (roles.Count == 0 || unsupportedRoles.Count > 0)
             {
                 _logger.LogWarning(
-                    "Login returned an unsupported role: {Role}",
-                    authResponse.Role);
+                    "Login returned invalid or unsupported roles: {Roles}",
+                    string.Join(", ", unsupportedRoles));
 
                 ModelState.AddModelError(
                     string.Empty,
-                    "Your account has an unsupported role.");
+                    "Your account has invalid or unsupported roles.");
 
                 return View(model);
             }
@@ -175,13 +188,18 @@ public class AccountController(
             {
                 new(ClaimTypes.NameIdentifier, authResponse.UserId),
                 new(ClaimTypes.Name, authResponse.Email),
-                new(ClaimTypes.Email, authResponse.Email),
-                new(ClaimTypes.Role, authResponse.Role)
+                new(ClaimTypes.Email, authResponse.Email)
             };
+
+            foreach (var role in roles)
+            {
+                claims.Add(new Claim(ClaimTypes.Role, role));
+            }
 
             var identity = new ClaimsIdentity(
                 claims,
-                CookieAuthenticationDefaults.AuthenticationScheme);
+                CookieAuthenticationDefaults.AuthenticationScheme
+            );
 
             var principal = new ClaimsPrincipal(identity);
 
@@ -207,11 +225,15 @@ public class AccountController(
                 principal,
                 properties);
 
-            return RedirectToAction("Index", dashboardController);
+            return RedirectToAction(
+                "Index",
+                GetDashboardController(roles));
         }
         catch (HttpRequestException ex)
         {
-            _logger.LogError(ex, "Unable to connect to the API during login.");
+            _logger.LogError(
+                ex,
+                "Unable to connect to the API during login.");
 
             ModelState.AddModelError(
                 string.Empty,
@@ -219,6 +241,22 @@ public class AccountController(
 
             return View(model);
         }
+    }
+
+    // Determine dashboard based on role priority.
+    private static string GetDashboardController(
+        IEnumerable<string> roles)
+    {
+        if (roles.Contains("Admin", StringComparer.OrdinalIgnoreCase))
+            return "Admin";
+
+        if (roles.Contains("Manager", StringComparer.OrdinalIgnoreCase))
+            return "Manager";
+
+        if (roles.Contains("Customer", StringComparer.OrdinalIgnoreCase))
+            return "Customer";
+
+        return "Home";
     }
 
     // POST: /Account/Logout

@@ -1,5 +1,7 @@
 
 using AspNet.MVC.Services.Api;
+using AspNet.MVC.Services.Users;
+
 using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace AspNet.MVC;
@@ -18,7 +20,10 @@ public class Program
             ?? throw new InvalidOperationException(
                 "ApiSettings:BaseUrl is not configured.");
 
-        if (!Uri.TryCreate(apiBaseUrl, UriKind.Absolute, out var apiUri))
+        if (!Uri.TryCreate(
+                apiBaseUrl,
+                UriKind.Absolute,
+                out var apiUri))
         {
             throw new InvalidOperationException(
                 "ApiSettings:BaseUrl must be a valid absolute URL.");
@@ -36,38 +41,55 @@ public class Program
             client.BaseAddress = apiUri;
         });
 
-        // Typed HTTP Clients with JWT Authorization
-        builder.Services.AddHttpClient<IProductApiService, ProductApiService>(
-            client =>
+        // Products API
+        builder.Services.AddHttpClient<
+            IProductApiService,
+            ProductApiService>(client =>
             {
                 client.BaseAddress = apiUri;
             })
-            .AddHttpMessageHandler<JwtAuthorizationHandler>();
+        .AddHttpMessageHandler<JwtAuthorizationHandler>();
 
-        builder.Services.AddHttpClient<ICategoryApiService, CategoryApiService>(
-            client =>
+        // Categories API
+        builder.Services.AddHttpClient<
+            ICategoryApiService,
+            CategoryApiService>(client =>
             {
                 client.BaseAddress = apiUri;
             })
-            .AddHttpMessageHandler<JwtAuthorizationHandler>();
+        .AddHttpMessageHandler<JwtAuthorizationHandler>();
 
-        builder.Services.AddHttpClient<ITagApiService, TagApiService>(
-            client =>
+        // Tags API
+        builder.Services.AddHttpClient<
+            ITagApiService,
+            TagApiService>(client =>
             {
                 client.BaseAddress = apiUri;
             })
-            .AddHttpMessageHandler<JwtAuthorizationHandler>();
+        .AddHttpMessageHandler<JwtAuthorizationHandler>();
 
-        builder.Services.AddHttpClient<IProductDetailsApiService, ProductDetailsApiService>(
-            client =>
+        // Product Details API
+        builder.Services.AddHttpClient<
+            IProductDetailsApiService,
+            ProductDetailsApiService>(client =>
             {
                 client.BaseAddress = apiUri;
             })
-            .AddHttpMessageHandler<JwtAuthorizationHandler>();
+        .AddHttpMessageHandler<JwtAuthorizationHandler>();
+
+        // Users API
+        builder.Services.AddHttpClient<
+            IUserApiService,
+            UserApiService>(client =>
+            {
+                client.BaseAddress = apiUri;
+            })
+        .AddHttpMessageHandler<JwtAuthorizationHandler>();
 
         // Cookie Authentication
         builder.Services
-            .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            .AddAuthentication(
+                CookieAuthenticationDefaults.AuthenticationScheme)
             .AddCookie(options =>
             {
                 options.LoginPath = "/Account/Login";
@@ -75,7 +97,9 @@ public class Program
 
                 options.Cookie.Name = "AspNet.MVC.Auth";
                 options.Cookie.HttpOnly = true;
-                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                options.Cookie.SecurePolicy =
+                    CookieSecurePolicy.Always;
+
                 options.Cookie.SameSite = SameSiteMode.Lax;
 
                 options.ExpireTimeSpan = TimeSpan.FromHours(8);
@@ -104,6 +128,7 @@ public class Program
         app.UseAuthentication();
         app.UseAuthorization();
 
+        // Routing
         app.MapControllerRoute(
             name: "default",
             pattern: "{controller=Account}/{action=Login}/{id?}");

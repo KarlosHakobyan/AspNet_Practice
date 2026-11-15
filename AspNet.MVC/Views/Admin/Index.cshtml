@@ -1,4 +1,7 @@
-﻿@{
+﻿
+@model AspNet.MVC.Models.Dashboard.AdminDashboardViewModel
+
+@{
     ViewData["Title"] = "Admin Dashboard";
 }
 
@@ -8,69 +11,117 @@
         <p>Here's what's happening with your application today.</p>
     </div>
 
-    <button class="dashboard-date">
+    <a asp-controller="Admin"
+       asp-action="Index"
+       class="dashboard-date text-decoration-none">
+
         <span>◷</span> Overview
-    </button>
+    </a>
 </div>
 
+@if (!Model.IsSystemHealthy)
+{
+        <div class="alert alert-warning mb-4">
+            Some dashboard statistics could not be loaded.
+            Please check API availability and try again.
+        </div>
+}
+
+<!-- Statistics -->
 <div class="row g-4 mb-4">
 
+    <!-- Products -->
     <div class="col-12 col-sm-6 col-xl-3">
         <div class="stat-card">
             <div class="stat-top">
                 <span>Total Products</span>
                 <div class="stat-icon icon-blue">▤</div>
             </div>
-            <h3>128</h3>
+
+            <h3>
+                @(Model.TotalProducts?.ToString("N0") ?? "—")
+            </h3>
+
             <p>Products in inventory</p>
         </div>
     </div>
 
+    <!-- Categories -->
     <div class="col-12 col-sm-6 col-xl-3">
         <div class="stat-card">
             <div class="stat-top">
                 <span>Categories</span>
                 <div class="stat-icon icon-purple">▧</div>
             </div>
-            <h3>12</h3>
+
+            <h3>
+                @(Model.TotalCategories?.ToString("N0") ?? "—")
+            </h3>
+
             <p>Organized categories</p>
         </div>
     </div>
 
+    <!-- Tags -->
     <div class="col-12 col-sm-6 col-xl-3">
         <div class="stat-card">
             <div class="stat-top">
                 <span>Total Tags</span>
                 <div class="stat-icon icon-orange">◇</div>
             </div>
-            <h3>34</h3>
+
+            <h3>
+                @(Model.TotalTags?.ToString("N0") ?? "—")
+            </h3>
+
             <p>Available tags</p>
         </div>
     </div>
 
+    <!-- System Status -->
     <div class="col-12 col-sm-6 col-xl-3">
         <div class="stat-card">
             <div class="stat-top">
                 <span>System Status</span>
-                <div class="stat-icon icon-green">✓</div>
+
+                <div class="stat-icon @(Model.IsSystemHealthy ? "icon-green" : "icon-orange")">
+                    @(Model.IsSystemHealthy ? "✓" : "!")
+                </div>
             </div>
-            <h3 class="healthy">Healthy</h3>
-            <p>Application running</p>
+
+            <h3 class="@(Model.IsSystemHealthy ? "healthy" : "text-warning")">
+                @Model.SystemStatus
+            </h3>
+
+            <p>
+                @(Model.IsSystemHealthy
+                        ? "All APIs responding"
+                        : "API connection issue")
+            </p>
         </div>
     </div>
 
 </div>
 
+<!-- Dashboard Content -->
 <div class="row g-4">
 
+    <!-- Recent Activity / Module Status -->
     <div class="col-12 col-xl-8">
         <div class="dashboard-panel">
+
             <div class="panel-header">
                 <div>
                     <h5>Recent Activity</h5>
-                    <p>Overview of your application</p>
+                    <p>Overview of your application modules</p>
                 </div>
-                <span class="panel-menu">•••</span>
+
+                <a asp-controller="Admin"
+                   asp-action="Index"
+                   class="panel-menu text-decoration-none"
+                   title="Refresh dashboard">
+                    ↻
+                </a>
             </div>
 
             <div class="table-responsive">
@@ -82,30 +133,63 @@
                             <th>STATUS</th>
                         </tr>
                     </thead>
+
                     <tbody>
                         <tr>
                             <td>Product management</td>
-                            <td>Products</td>
-                            <td><span class="status-badge">Ready</span></td>
+                            <td>
+                                <a asp-controller="Products"
+                                   asp-action="Index">
+                                    Products
+                                </a>
+                            </td>
+                            <td>
+                                <span class="status-badge">
+                                    @(Model.TotalProducts.HasValue ? "Ready" : "Unavailable")
+                                </span>
+                            </td>
                         </tr>
+
                         <tr>
                             <td>Category management</td>
-                            <td>Categories</td>
-                            <td><span class="status-badge">Ready</span></td>
+                            <td>
+                                <a asp-controller="Categories"
+                                   asp-action="Index">
+                                    Categories
+                                </a>
+                            </td>
+                            <td>
+                                <span class="status-badge">
+                                    @(Model.TotalCategories.HasValue ? "Ready" : "Unavailable")
+                                </span>
+                            </td>
                         </tr>
+
                         <tr>
                             <td>Tag management</td>
-                            <td>Tags</td>
-                            <td><span class="status-badge">Ready</span></td>
+                            <td>
+                                <a asp-controller="Tags"
+                                   asp-action="Index">
+                                    Tags
+                                </a>
+                            </td>
+                            <td>
+                                <span class="status-badge">
+                                    @(Model.TotalTags.HasValue ? "Ready" : "Unavailable")
+                                </span>
+                            </td>
                         </tr>
                     </tbody>
                 </table>
             </div>
+
         </div>
     </div>
 
+    <!-- Quick Actions -->
     <div class="col-12 col-xl-4">
         <div class="dashboard-panel">
+
             <div class="panel-header">
                 <div>
                     <h5>Quick Actions</h5>
@@ -114,32 +198,52 @@
             </div>
 
             <div class="quick-actions">
-                <a href="#" class="quick-action">
+
+                <!-- Add Product -->
+                <a asp-controller="Products"
+                   asp-action="Create"
+                   class="quick-action">
+
                     <span class="action-icon icon-blue">+</span>
+
                     <span>
                         <strong>Add Product</strong>
                         <small>Create a new product</small>
                     </span>
+
                     <span class="action-arrow">→</span>
                 </a>
 
-                <a href="#" class="quick-action">
+                <!-- Add Category -->
+                <a asp-controller="Categories"
+                   asp-action="Create"
+                   class="quick-action">
+
                     <span class="action-icon icon-purple">+</span>
+
                     <span>
                         <strong>Add Category</strong>
                         <small>Create a new category</small>
                     </span>
+
                     <span class="action-arrow">→</span>
                 </a>
 
-                <a href="#" class="quick-action">
+                <!-- Add Tag -->
+                <a asp-controller="Tags"
+                   asp-action="Create"
+                   class="quick-action">
+
                     <span class="action-icon icon-orange">+</span>
+
                     <span>
                         <strong>Add Tag</strong>
                         <small>Create a new tag</small>
                     </span>
+
                     <span class="action-arrow">→</span>
                 </a>
+
             </div>
         </div>
     </div>

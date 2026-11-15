@@ -1,5 +1,4 @@
-﻿
-using AspNet.Api.Services.Auth;
+﻿using AspNet.Api.Services.Auth;
 using AspNet.BLL.Common.Results;
 using AspNet.Data.Identity;
 using AspNet.Domain.Models.AuthModels;
@@ -29,7 +28,7 @@ public class AuthService : IAuthService
         {
             return Result.Failure(
                 new Error(
-                    "User.AlreadyExists",
+                    "Auth.EmailAlreadyExists",
                     "A user with this email already exists.",
                     ErrorType.Conflict
                 )
@@ -44,22 +43,17 @@ public class AuthService : IAuthService
             UserName = model.Email
         };
 
-        var result = await _userManager.CreateAsync(
+        var createResult = await _userManager.CreateAsync(
             user,
             model.Password
         );
 
-        if (!result.Succeeded)
+        if (!createResult.Succeeded)
         {
-            var errors = string.Join(
-                "; ",
-                result.Errors.Select(e => e.Description)
-            );
-
             return Result.Failure(
                 new Error(
-                    "User.RegistrationFailed",
-                    errors,
+                    "Auth.RegistrationFailed",
+                    string.Join("; ", createResult.Errors.Select(x => x.Description)),
                     ErrorType.Validation
                 )
             );
@@ -76,8 +70,8 @@ public class AuthService : IAuthService
 
             return Result.Failure(
                 new Error(
-                    "User.RoleAssignmentFailed",
-                    "Could not assign the default user role.",
+                    "Auth.RoleAssignmentFailed",
+                    "Unable to assign the default role.",
                     ErrorType.Failure
                 )
             );
@@ -86,15 +80,15 @@ public class AuthService : IAuthService
         return Result.Success();
     }
 
-    public async Task<Result<AuthResponseModel>> LoginAsync(
-        LoginModel model)
+    public async Task<Result<AuthResponseModel>> LoginAsync(LoginModel model)
     {
         var user = await _userManager.FindByEmailAsync(model.Email);
 
         if (user is null)
-        {
             return InvalidCredentials();
-        }
+
+        if (await _userManager.IsLockedOutAsync(user))
+            return InvalidCredentials();
 
         var passwordValid = await _userManager.CheckPasswordAsync(
             user,
@@ -102,20 +96,29 @@ public class AuthService : IAuthService
         );
 
         if (!passwordValid)
-        {
             return InvalidCredentials();
+
+        var roles = await _userManager.GetRolesAsync(user);
+
+        if (roles.Count == 0)
+        {
+            return Result<AuthResponseModel>.Failure(
+                new Error(
+                    "Auth.UserHasNoRoles",
+                    "User does not have any assigned roles.",
+                    ErrorType.Forbidden
+                )
+            );
         }
 
         var token = await _jwtTokenService.GenerateTokenAsync(user);
-
-        var roles = await _userManager.GetRolesAsync(user);
 
         return Result<AuthResponseModel>.Success(
             new AuthResponseModel
             {
                 UserId = user.Id,
                 Email = user.Email!,
-                Role = roles.FirstOrDefault() ?? RoleNames.Customer,
+                Roles = roles.ToList(),
                 Token = token
             }
         );

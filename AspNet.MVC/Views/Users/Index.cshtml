@@ -1,0 +1,110 @@
+﻿@model IReadOnlyList<AspNet.MVC.Models.Users.UserListViewModel>
+
+@{
+    ViewData["Title"] = "Users";
+}
+
+<div class="content-header d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h3>Users Management</h3>
+        <p class="text-muted mb-0">Manage registered users and their permissions</p>
+    </div>
+
+    <div class="badge bg-primary fs-6">
+        @Model.Count Users
+    </div>
+</div>
+
+@if (TempData["Success"] is not null)
+{
+    <div class="alert alert-success">@TempData["Success"]</div>
+}
+
+@if (TempData["Error"] is not null)
+{
+    <div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table align-middle">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Email</th>
+                        <th>Roles</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (Model.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center text-muted py-4">
+                                No users found.
+                            </td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var user in Model)
+                        {
+                            var fullName = $"{user.FirstName} {user.LastName}".Trim();
+
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="user-avatar">
+                                            @(string.IsNullOrWhiteSpace(fullName)
+                                                ? "U"
+                                                : fullName[..1].ToUpperInvariant())
+                                        </div>
+
+                                        <div>
+                                            <strong>
+                                                @(string.IsNullOrWhiteSpace(fullName)
+                                                    ? "Unnamed User"
+                                                    : fullName)
+                                            </strong>
+
+                                            <div class="small text-muted">
+                                                @user.Id
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td>@user.Email</td>
+
+                                <td>
+                                    @foreach (var role in user.Roles)
+                                    {
+                                        <span class="badge bg-primary-subtle text-primary me-1">
+                                            @role
+                                        </span>
+                                    }
+                                </td>
+
+                                <td class="text-end">
+                                    <a asp-action="Details"
+                                       asp-route-id="@user.Id"
+                                       class="btn btn-sm btn-outline-primary">
+                                        Details
+                                    </a>
+
+                                    <a asp-action="Edit"
+                                       asp-route-id="@user.Id"
+                                       class="btn btn-sm btn-outline-secondary">
+                                        Edit
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
